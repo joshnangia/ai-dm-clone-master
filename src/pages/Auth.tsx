@@ -83,7 +83,7 @@ const Auth = () => {
         if (error) {
           if (error.message.includes('User already registered')) {
             toast({
-              title: "Account exists",
+              title: "Account exists", 
               description: "This email is already registered. Try logging in instead.",
               variant: "destructive",
             });
@@ -95,23 +95,11 @@ const Auth = () => {
             });
           }
         } else {
-          // Send custom verification email via Resend
-          try {
-            await supabase.functions.invoke('send-verification-email', {
-              body: {
-                email,
-                confirmationUrl: `${window.location.origin}/auth?verified=true&email=${encodeURIComponent(email)}`,
-                isSignup: true
-              }
-            });
-          } catch (emailError) {
-            console.log('Custom email sending failed, using Supabase default');
-          }
-          
           toast({
-            title: "Check your email!",
-            description: "We sent you a verification link. Click it to complete your account setup.",
+            title: "Account created!",
+            description: "You can now sign in with your credentials.",
           });
+          setIsLogin(true);
         }
       }
     } catch (error) {
