@@ -4,44 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { Bot, Crown, MessageSquare, ArrowLeft } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 const Dashboard = () => {
-  const { user, subscribed, signOut, session } = useAuth();
-  const { toast } = useToast();
+  const { user, subscribed, signOut } = useAuth();
 
-  const handleUpgrade = async () => {
-    if (!user || !session) {
-      toast({
-        title: "Please sign in",
-        description: "You need to be logged in to subscribe.",
-      });
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (error) throw error;
-
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      } else {
-        throw new Error('No checkout URL received');
-      }
-    } catch (error) {
-      console.error('Stripe checkout error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start checkout. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleUpgrade = () => {
+    window.open('https://buy.stripe.com/test_6oU9AU6QO0sY9Qn6HKdAk07', '_blank');
   };
 
   if (!subscribed) {
