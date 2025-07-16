@@ -113,41 +113,28 @@ const Try = () => {
           </div>
         ) : (
           <div className="max-w-md mx-auto">
-            {/* Clean paywall that matches the design */}
+            {/* Seamless continuation that matches the vibe */}
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-black mb-4">
-                Your AI Reply Is Ready
+              <h2 className="text-3xl font-black mb-4">
+                Your Reply Is Ready
               </h2>
               <p className="text-gray-300">
-                Unlock to see what the AI wrote for you
+                Upgrade to unlimited access
               </p>
             </div>
 
-            {/* Preview box to show something is there */}
-            <div className="bg-white/10 rounded-2xl p-6 mb-6 relative">
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-3xl mb-2">🔒</div>
-                  <p className="text-white font-bold">Unlock to view</p>
-                </div>
-              </div>
-              <p className="text-lg leading-relaxed opacity-20">
-                Hey! Thanks for reaching out. I'm definitely interested - can you tell me more about the details? I'd love to learn how this could work for me.
-              </p>
-            </div>
-
-            {/* Simple upgrade button */}
+            {/* Simple clean upgrade */}
             <Link to="/unlock">
               <Button 
                 size="lg" 
-                className="w-full bg-white text-black hover:bg-gray-200 py-4 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300 mb-4"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300 mb-4"
               >
-                Unlock For $9.99/month
+                Get Unlimited Access - $9.99/mo
               </Button>
             </Link>
             
             <p className="text-center text-sm text-gray-400">
-              Cancel anytime • Instant access
+              Cancel anytime
             </p>
           </div>
         )}
