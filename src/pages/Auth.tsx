@@ -22,8 +22,22 @@ const Auth = () => {
         navigate('/');
       }
     };
+    
+    // Check for verification success
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('verified') === 'true') {
+      toast({
+        title: "Email verified!",
+        description: "Your account is now verified. You can sign in.",
+      });
+      setIsLogin(true);
+      
+      // Clear the URL params
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
     checkAuth();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,11 +72,11 @@ const Auth = () => {
           navigate('/');
         }
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`
+            emailRedirectTo: `${window.location.origin}/auth?verified=true`
           }
         });
         
@@ -81,9 +95,22 @@ const Auth = () => {
             });
           }
         } else {
+          // Send custom verification email via Resend
+          try {
+            await supabase.functions.invoke('send-verification-email', {
+              body: {
+                email,
+                confirmationUrl: `${window.location.origin}/auth?verified=true&email=${encodeURIComponent(email)}`,
+                isSignup: true
+              }
+            });
+          } catch (emailError) {
+            console.log('Custom email sending failed, using Supabase default');
+          }
+          
           toast({
-            title: "Account created!",
-            description: "Please check your email to verify your account.",
+            title: "Check your email!",
+            description: "We sent you a verification link. Click it to complete your account setup.",
           });
         }
       }
