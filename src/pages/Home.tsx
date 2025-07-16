@@ -20,6 +20,15 @@ const Home = () => {
                     Premium
                   </span>
                 )}
+                <Link to="/dashboard">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    Dashboard
+                  </Button>
+                </Link>
                 <Button
                   onClick={signOut}
                   variant="outline"

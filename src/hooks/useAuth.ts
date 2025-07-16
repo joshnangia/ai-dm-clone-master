@@ -9,35 +9,41 @@ export const useAuth = () => {
   const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+    let mounted = true;
+
+    const getInitialSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (mounted) {
+          console.log('Initial session:', session?.user?.email || 'no user');
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Session error:', error);
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    // Set up auth listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (mounted) {
+        console.log('Auth change:', event, session?.user?.email || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-        
-        // Simple subscription check - don't block loading
-        if (session?.user) {
-          setSubscribed(false); // Default to false for now
-        } else {
-          setSubscribed(false);
-        }
       }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.email);
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    }).catch((error) => {
-      console.error('Session check error:', error);
-      setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    getInitialSession();
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const checkSubscription = async (userSession: Session) => {
