@@ -118,9 +118,12 @@ const Try = () => {
           <Button 
             size="lg" 
             className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300"
-            onClick={() => window.location.href = 'https://buy.stripe.com/test_aFa5kEcVagA855I3YFb7y01'}
+            onClick={() => {
+              console.log('Payment button clicked');
+              window.location.href = 'https://buy.stripe.com/test_aFa5kEcVagA855I3YFb7y01';
+            }}
           >
-            Unlock Unlimited Access
+            Unlock Unlimited Access (TEST)
           </Button>
         </div>
       </div>
@@ -187,9 +190,12 @@ const Try = () => {
             <Button 
               size="lg" 
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300 mb-4"
-              onClick={() => window.location.href = 'https://buy.stripe.com/test_aFa5kEcVagA855I3YFb7y01'}
+              onClick={() => {
+                console.log('Payment button clicked');
+                window.location.href = 'https://buy.stripe.com/test_aFa5kEcVagA855I3YFb7y01';
+              }}
             >
-              Get Unlimited Access - $9.99/mo
+              Get Unlimited Access - $9.99/mo (TEST)
             </Button>
             
             <p className="text-center text-sm text-gray-400">
