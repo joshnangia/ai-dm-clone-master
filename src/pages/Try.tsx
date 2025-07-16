@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { Copy, Check } from 'lucide-react';
 
 const Try = () => {
   const [dmText, setDmText] = useState('');
   const [generatedReply, setGeneratedReply] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [hasUsedOnce, setHasUsedOnce] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const { user, session, subscribed, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const used = localStorage.getItem('usedOnce');
@@ -19,26 +27,79 @@ const Try = () => {
   const generateReply = async () => {
     if (!dmText.trim()) return;
 
-    setIsLoading(true);
-    
-    try {
-      // Simulate processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Instead of showing result, show paywall
+    // If user is not logged in, redirect to auth
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please sign in to use the AI reply generator.",
+      });
+      navigate('/auth');
+      return;
+    }
+
+    // If user is logged in but not subscribed, show paywall
+    if (!subscribed) {
       setGeneratedReply("PAYWALL");
       localStorage.setItem('usedOnce', 'true');
       setHasUsedOnce(true);
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-reply', {
+        body: { dmText },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.reply) {
+        setGeneratedReply(data.reply);
+        toast({
+          title: "Reply generated!",
+          description: "Your perfect reply is ready to copy.",
+        });
+      } else {
+        throw new Error('No reply generated');
+      }
     } catch (error) {
       console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate reply. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedReply);
+  const copyToClipboard = async () => {
+    if (generatedReply && generatedReply !== "PAYWALL") {
+      await navigator.clipboard.writeText(generatedReply);
+      setCopied(true);
+      toast({
+        title: "Copied!",
+        description: "Reply copied to clipboard.",
+      });
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      </div>
+    );
+  }
 
   // Used state - show upgrade
   if (hasUsedOnce && !generatedReply) {
@@ -110,7 +171,7 @@ const Try = () => {
               </Button>
             </div>
           </div>
-        ) : (
+        ) : generatedReply === "PAYWALL" ? (
           <div className="max-w-md mx-auto">
             {/* Seamless continuation that matches the vibe */}
             <div className="text-center mb-8">
@@ -134,6 +195,41 @@ const Try = () => {
             <p className="text-center text-sm text-gray-400">
               Cancel anytime
             </p>
+          </div>
+        ) : (
+          <div className="max-w-md mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-black mb-4">
+                Your Perfect Reply
+              </h2>
+              <p className="text-gray-300">
+                Copy and paste this reply
+              </p>
+            </div>
+
+            <div className="bg-white/10 border border-white/20 rounded-2xl p-6 mb-6">
+              <p className="text-lg leading-relaxed mb-4">{generatedReply}</p>
+              <Button
+                onClick={copyToClipboard}
+                className="w-full bg-white text-black hover:bg-gray-100 font-bold py-3 rounded-xl flex items-center justify-center gap-2"
+              >
+                {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                {copied ? 'Copied!' : 'Copy Reply'}
+              </Button>
+            </div>
+
+            <div className="text-center space-y-4">
+              <Button
+                onClick={() => {
+                  setGeneratedReply('');
+                  setDmText('');
+                }}
+                variant="outline"
+                className="w-full border-white/20 text-white hover:bg-white/10"
+              >
+                Generate Another Reply
+              </Button>
+            </div>
           </div>
         )}
       </div>

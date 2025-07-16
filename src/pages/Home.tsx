@@ -1,15 +1,46 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 
 const Home = () => {
+  const { user, subscribed, signOut } = useAuth();
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Mobile-first hero - no navigation clutter */}
       <div className="px-4 py-8">
-        {/* Logo minimal */}
-        <div className="text-center mb-8">
+        {/* Logo with auth */}
+        <div className="flex justify-between items-center mb-8">
           <div className="text-2xl font-bold">InstaCloser.ai</div>
+          <div className="flex gap-2">
+            {user ? (
+              <div className="flex items-center gap-3">
+                {subscribed && (
+                  <span className="text-sm bg-green-600 px-3 py-1 rounded-full font-medium">
+                    Premium
+                  </span>
+                )}
+                <Button
+                  onClick={signOut}
+                  variant="outline"
+                  size="sm"
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Link to="/auth">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-white/20 text-white hover:bg-white/10"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Hero - MOBILE OPTIMIZED */}
