@@ -80,6 +80,43 @@ const Try = () => {
     }
   };
 
+  const handleStripeCheckout = async () => {
+    if (!user || !session) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be logged in to subscribe.",
+      });
+      navigate('/auth');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      console.error('Stripe checkout error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start checkout. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const copyToClipboard = async () => {
     if (generatedReply && generatedReply !== "PAYWALL") {
       await navigator.clipboard.writeText(generatedReply);
@@ -115,14 +152,12 @@ const Try = () => {
             <br />
             <span className="text-white font-bold">Just $9.99/month</span>
           </p>
-          <Button 
-            size="lg" 
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300"
-            onClick={() => {
-              console.log('Payment button clicked');
-              window.location.href = 'https://buy.stripe.com/test_aFa5kEcVagA855I3YFb7y01';
-            }}
-          >
+            <Button 
+              size="lg" 
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300"
+              onClick={handleStripeCheckout}
+              disabled={isLoading}
+            >
             Unlock Unlimited Access (TEST)
           </Button>
         </div>
@@ -190,10 +225,8 @@ const Try = () => {
             <Button 
               size="lg" 
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300 mb-4"
-              onClick={() => {
-                console.log('Payment button clicked');
-                window.location.href = 'https://buy.stripe.com/test_aFa5kEcVagA855I3YFb7y01';
-              }}
+              onClick={handleStripeCheckout}
+              disabled={isLoading}
             >
               Get Unlimited Access - $9.99/mo (TEST)
             </Button>
