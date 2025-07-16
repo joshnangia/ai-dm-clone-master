@@ -54,14 +54,13 @@ const Try = () => {
             <br />
             <span className="text-white font-bold">Just $9.99/month</span>
           </p>
-          <Link to="/unlock">
-            <Button 
-              size="lg" 
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300"
-            >
-              Unlock Unlimited Access
-            </Button>
-          </Link>
+          <Button 
+            size="lg" 
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300"
+            onClick={() => window.open('https://buy.stripe.com/7sY5kE8EUgA87dQ1Qxb7y0e', '_blank')}
+          >
+            Unlock Unlimited Access
+          </Button>
         </div>
       </div>
     );
@@ -124,14 +123,13 @@ const Try = () => {
             </div>
 
             {/* Simple clean upgrade */}
-            <Link to="/unlock">
-              <Button 
-                size="lg" 
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300 mb-4"
-              >
-                Get Unlimited Access - $9.99/mo
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300 mb-4"
+              onClick={() => window.open('https://buy.stripe.com/7sY5kE8EUgA87dQ1Qxb7y0e', '_blank')}
+            >
+              Get Unlimited Access - $9.99/mo
+            </Button>
             
             <p className="text-center text-sm text-gray-400">
               Cancel anytime
