@@ -12,15 +12,14 @@ export const useAuth = () => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Check subscription status when auth state changes
+        // Simple subscription check - don't block loading
         if (session?.user) {
-          setTimeout(() => {
-            checkSubscription(session);
-          }, 0);
+          setSubscribed(false); // Default to false for now
         } else {
           setSubscribed(false);
         }
@@ -29,15 +28,13 @@ export const useAuth = () => {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      
-      if (session?.user) {
-        setTimeout(() => {
-          checkSubscription(session);
-        }, 0);
-      }
+    }).catch((error) => {
+      console.error('Session check error:', error);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
