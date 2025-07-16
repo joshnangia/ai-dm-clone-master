@@ -12,7 +12,25 @@ const InstaDMTool = () => {
   const [showPaywall, setShowPaywall] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
 
+  // Code rain animation
+  const [codeLines, setCodeLines] = useState<string[]>([]);
+
   useEffect(() => {
+    // Generate code lines for animation
+    const codes = [
+      'if (dm.intent === "sales") { generateReply(); }',
+      'const response = await ai.analyze(message);',
+      'function closeTheDeal(conversation) {',
+      'return optimizeConversion(reply);',
+      'ai.train(closingTechniques);',
+      'const result = processInboundDM();',
+      'export default DMCloser;',
+      'handleConversation(userInput);',
+      'if (conversion > 0.85) success();',
+      'return professionalReply;'
+    ];
+    setCodeLines(codes);
+
     // Check if user has used their free try
     const usedFreeTry = localStorage.getItem('instacloser_used_free_try');
     const paidStatus = localStorage.getItem('instacloser_paid_status');
@@ -70,48 +88,59 @@ const InstaDMTool = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-white/5 to-transparent"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
       {/* Navigation Header */}
-      <nav className="border-b border-gray-200 dark:border-gray-700 p-4">
+      <nav className="relative z-50 backdrop-blur-xl bg-white/10 border-b border-white/20 p-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/25530eda-8a1d-468c-9929-0025e965b72e.png" 
               alt="InstaCloser.ai Logo" 
-              className="h-10 w-10"
+              className="h-16 w-16 drop-shadow-lg"
             />
-            <Link to="/" className="text-2xl font-bold font-mono text-gray-900 dark:text-white">
+            <Link to="/" className="text-2xl md:text-3xl font-bold font-mono text-white drop-shadow-lg">
               InstaCloser.ai
             </Link>
           </div>
-          <div className="flex items-center space-x-6">
-            <Link to="/how-it-works" className="font-mono text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+          <div className="hidden md:flex items-center space-x-8">
+            <Link to="/how-it-works" className="font-mono text-white/80 hover:text-white transition-all duration-300 hover:scale-105">
               How It Works
             </Link>
-            <Link to="/pricing" className="font-mono text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+            <Link to="/pricing" className="font-mono text-white/80 hover:text-white transition-all duration-300 hover:scale-105">
               Pricing
             </Link>
-            <Link to="/about" className="font-mono text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+            <Link to="/about" className="font-mono text-white/80 hover:text-white transition-all duration-300 hover:scale-105">
               About
             </Link>
           </div>
         </div>
       </nav>
 
-      <div className="flex items-center justify-center p-4 pt-12">
+      {/* Hero Section */}
+      <div className="relative z-10 flex items-center justify-center p-4 pt-12">
         <div className="w-full max-w-2xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 font-mono">
-              Type a DM. Get a pro-level reply.
+          <div className="text-center mb-12 animate-fade-in">
+            <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 font-mono drop-shadow-2xl">
+              Type a DM.{' '}
+              <span className="bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent animate-pulse">
+                Get a pro-level reply.
+              </span>
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 font-mono">
+            <p className="text-xl md:text-2xl text-white/80 font-mono drop-shadow-lg">
               Your personal AI Closer. Built for Instagram. Try it free once.
             </p>
           </div>
 
           {/* Main Tool */}
-          <Card className="p-8 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 shadow-lg">
+          <Card className="p-8 backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl rounded-3xl transform hover:scale-105 transition-all duration-500">
             <div className="space-y-6">
               {/* Input */}
               <div>
@@ -119,7 +148,7 @@ const InstaDMTool = () => {
                   placeholder="Paste your DM here"
                   value={dmText}
                   onChange={(e) => setDmText(e.target.value)}
-                  className="min-h-32 text-lg font-mono resize-none border-2 border-gray-300 dark:border-gray-600 focus:border-gray-900 dark:focus:border-white"
+                  className="min-h-32 text-lg font-mono resize-none bg-white/20 backdrop-blur-sm border-2 border-white/30 focus:border-white/50 text-white placeholder:text-white/60 rounded-2xl"
                   disabled={isLoading}
                 />
               </div>
@@ -128,28 +157,35 @@ const InstaDMTool = () => {
               <Button
                 onClick={generateReply}
                 disabled={isLoading || !dmText.trim()}
-                className="w-full py-4 text-lg font-bold bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+                className="w-full py-6 text-xl font-bold bg-gradient-to-r from-white/20 to-white/30 hover:from-white/30 hover:to-white/40 backdrop-blur-sm text-white border border-white/30 transition-all duration-300 transform hover:scale-105 rounded-2xl"
               >
-                {isLoading ? 'Generating Reply...' : 'Generate Reply'}
+                {isLoading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <span>Generating Reply...</span>
+                  </div>
+                ) : (
+                  'Generate Reply'
+                )}
               </Button>
 
               {/* Generated Reply */}
               {generatedReply && (
-                <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-200 dark:border-gray-600">
+                <div className="mt-8 p-6 backdrop-blur-xl bg-white/20 rounded-2xl border border-white/30 transform animate-scale-in">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white font-mono">
+                    <h3 className="text-lg font-bold text-white font-mono">
                       Your AI Reply:
                     </h3>
                     <Button
                       onClick={copyToClipboard}
                       variant="outline"
                       size="sm"
-                      className="font-mono"
+                      className="font-mono bg-white/20 border-white/30 text-white hover:bg-white/30"
                     >
                       Copy
                     </Button>
                   </div>
-                  <p className="text-gray-800 dark:text-gray-200 font-mono leading-relaxed">
+                  <p className="text-white/90 font-mono leading-relaxed">
                     {generatedReply}
                   </p>
                 </div>
@@ -159,52 +195,93 @@ const InstaDMTool = () => {
 
           {/* Usage Status */}
           {!isPaid && (
-            <div className="text-center mt-6">
-              <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">
+            <div className="text-center mt-6 animate-fade-in">
+              <p className="text-sm text-white/60 font-mono backdrop-blur-sm bg-white/10 rounded-full px-4 py-2 inline-block">
                 {hasUsedFreeTry ? 'Free try used. Upgrade for unlimited replies.' : 'One free try remaining.'}
               </p>
             </div>
           )}
 
           {isPaid && (
-            <div className="text-center mt-6">
-              <p className="text-sm text-green-600 dark:text-green-400 font-mono">
-                Unlimited replies activated
+            <div className="text-center mt-6 animate-fade-in">
+              <p className="text-sm text-green-400 font-mono backdrop-blur-sm bg-green-400/10 rounded-full px-4 py-2 inline-block">
+                ✨ Unlimited replies activated
               </p>
             </div>
           )}
         </div>
       </div>
 
+      {/* Code Rain Section */}
+      <div className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 backdrop-blur-sm bg-black/20"></div>
+        <div className="absolute inset-0 overflow-hidden">
+          {codeLines.map((line, index) => (
+            <div
+              key={index}
+              className="absolute text-white/40 font-mono text-sm animate-pulse"
+              style={{
+                left: `${(index * 15) % 100}%`,
+                animationDelay: `${index * 0.5}s`,
+                animationDuration: '4s',
+                transform: `translateY(${-50 + (index * 20)}px)`,
+              }}
+            >
+              {line}
+            </div>
+          ))}
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-4xl md:text-6xl font-bold font-mono text-white mb-8 drop-shadow-2xl">
+            Powered by{' '}
+            <span className="bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent">
+              Advanced AI
+            </span>
+          </h2>
+          <p className="text-xl text-white/80 font-mono mb-12">
+            Every reply is crafted by cutting-edge AI trained on millions of successful conversations
+          </p>
+        </div>
+      </div>
+
       {/* Additional Sections */}
-      <div className="max-w-6xl mx-auto px-4 py-16 space-y-16">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-16 space-y-20">
         {/* Features Section */}
         <section className="text-center">
-          <h2 className="text-3xl font-bold font-mono text-gray-900 dark:text-white mb-8">
+          <h2 className="text-3xl md:text-5xl font-bold font-mono text-white mb-12 drop-shadow-lg">
             Why InstaCloser.ai Works
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6">
-              <h3 className="text-xl font-bold font-mono text-gray-900 dark:text-white mb-3">
+            <div className="backdrop-blur-xl bg-white/10 p-8 rounded-3xl border border-white/20 transform hover:scale-105 transition-all duration-500 hover:bg-white/20">
+              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-white/20 to-white/30 rounded-2xl flex items-center justify-center">
+                <span className="text-2xl">⚡</span>
+              </div>
+              <h3 className="text-xl font-bold font-mono text-white mb-4">
                 Instant Replies
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 font-mono">
+              <p className="text-white/80 font-mono leading-relaxed">
                 Generate professional responses in seconds. Never leave anyone on read again.
               </p>
             </div>
-            <div className="p-6">
-              <h3 className="text-xl font-bold font-mono text-gray-900 dark:text-white mb-3">
+            <div className="backdrop-blur-xl bg-white/10 p-8 rounded-3xl border border-white/20 transform hover:scale-105 transition-all duration-500 hover:bg-white/20">
+              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-white/20 to-white/30 rounded-2xl flex items-center justify-center">
+                <span className="text-2xl">🎯</span>
+              </div>
+              <h3 className="text-xl font-bold font-mono text-white mb-4">
                 Conversion Focused
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 font-mono">
+              <p className="text-white/80 font-mono leading-relaxed">
                 Trained specifically for closing deals, making sales, and converting leads.
               </p>
             </div>
-            <div className="p-6">
-              <h3 className="text-xl font-bold font-mono text-gray-900 dark:text-white mb-3">
+            <div className="backdrop-blur-xl bg-white/10 p-8 rounded-3xl border border-white/20 transform hover:scale-105 transition-all duration-500 hover:bg-white/20">
+              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-white/20 to-white/30 rounded-2xl flex items-center justify-center">
+                <span className="text-2xl">📱</span>
+              </div>
+              <h3 className="text-xl font-bold font-mono text-white mb-4">
                 Mobile First
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 font-mono">
+              <p className="text-white/80 font-mono leading-relaxed">
                 Built for Instagram users. Works perfectly on your phone.
               </p>
             </div>
@@ -212,62 +289,62 @@ const InstaDMTool = () => {
         </section>
 
         {/* Stats Section */}
-        <section className="text-center bg-gray-50 dark:bg-gray-800 py-16 rounded-lg">
-          <h2 className="text-3xl font-bold font-mono text-gray-900 dark:text-white mb-8">
+        <section className="text-center backdrop-blur-xl bg-white/5 py-20 rounded-3xl border border-white/20">
+          <h2 className="text-3xl md:text-5xl font-bold font-mono text-white mb-12 drop-shadow-lg">
             The Numbers
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <div className="text-4xl font-bold font-mono text-gray-900 dark:text-white">10x</div>
-              <div className="text-gray-600 dark:text-gray-300 font-mono">Faster Responses</div>
+            <div className="transform hover:scale-110 transition-all duration-300">
+              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">10x</div>
+              <div className="text-white/80 font-mono text-lg">Faster Responses</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold font-mono text-gray-900 dark:text-white">85%</div>
-              <div className="text-gray-600 dark:text-gray-300 font-mono">Higher Conversion Rate</div>
+            <div className="transform hover:scale-110 transition-all duration-300">
+              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">85%</div>
+              <div className="text-white/80 font-mono text-lg">Higher Conversion Rate</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold font-mono text-gray-900 dark:text-white">24/7</div>
-              <div className="text-gray-600 dark:text-gray-300 font-mono">Always Available</div>
+            <div className="transform hover:scale-110 transition-all duration-300">
+              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">24/7</div>
+              <div className="text-white/80 font-mono text-lg">Always Available</div>
             </div>
           </div>
         </section>
 
         {/* Social Proof Section */}
         <section className="text-center">
-          <h2 className="text-3xl font-bold font-mono text-gray-900 dark:text-white mb-8">
+          <h2 className="text-3xl md:text-5xl font-bold font-mono text-white mb-12 drop-shadow-lg">
             What Users Say
           </h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="p-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
-              <p className="text-gray-800 dark:text-gray-200 font-mono mb-4">
+            <Card className="p-8 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl transform hover:scale-105 transition-all duration-500">
+              <p className="text-white/90 font-mono mb-6 text-lg leading-relaxed">
                 "This saved me hours every day. My DM response rate went through the roof."
               </p>
-              <div className="text-sm text-gray-500 dark:text-gray-400 font-mono">— Sarah K.</div>
+              <div className="text-sm text-white/60 font-mono">— Sarah K., Entrepreneur</div>
             </Card>
-            <Card className="p-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
-              <p className="text-gray-800 dark:text-gray-200 font-mono mb-4">
+            <Card className="p-8 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl transform hover:scale-105 transition-all duration-500">
+              <p className="text-white/90 font-mono mb-6 text-lg leading-relaxed">
                 "Finally, a tool that actually understands how to close deals via DM."
               </p>
-              <div className="text-sm text-gray-500 dark:text-gray-400 font-mono">— Mike R.</div>
+              <div className="text-sm text-white/60 font-mono">— Mike R., Sales Pro</div>
             </Card>
           </div>
         </section>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-gray-700 py-8 mt-16">
+      <footer className="relative z-10 backdrop-blur-xl bg-white/10 border-t border-white/20 py-12 mt-20">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex items-center justify-center space-x-4 mb-6">
             <img 
               src="/lovable-uploads/25530eda-8a1d-468c-9929-0025e965b72e.png" 
               alt="InstaCloser.ai Logo" 
-              className="h-8 w-8"
+              className="h-12 w-12 drop-shadow-lg"
             />
-            <span className="text-xl font-bold font-mono text-gray-900 dark:text-white">
+            <span className="text-2xl font-bold font-mono text-white drop-shadow-lg">
               InstaCloser.ai
             </span>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 font-mono text-sm">
+          <p className="text-white/60 font-mono text-sm">
             AI-powered DM replies for modern entrepreneurs
           </p>
         </div>
@@ -275,27 +352,27 @@ const InstaDMTool = () => {
 
       {/* Paywall Popup */}
       {showPaywall && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <Card className="w-full max-w-md p-8 bg-white dark:bg-gray-800">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/20 border border-white/30 rounded-3xl transform animate-scale-in">
             <div className="text-center space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white font-mono">
+              <h2 className="text-2xl md:text-3xl font-bold text-white font-mono">
                 You just used your free try.
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 font-mono">
+              <p className="text-white/80 font-mono leading-relaxed">
                 Unlock unlimited replies for just $9.99/month.
                 Start closing leads, sales, and conversations in seconds.
               </p>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <Button
                   onClick={handleUpgrade}
-                  className="w-full py-3 text-lg font-bold bg-gray-900 hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+                  className="w-full py-4 text-lg font-bold bg-gradient-to-r from-white/30 to-white/40 hover:from-white/40 hover:to-white/50 backdrop-blur-sm text-white border border-white/30 rounded-2xl transform hover:scale-105 transition-all duration-300"
                 >
-                  Unlock Now
+                  🚀 Unlock Now
                 </Button>
                 <Button
                   onClick={() => setShowPaywall(false)}
                   variant="ghost"
-                  className="w-full font-mono"
+                  className="w-full font-mono text-white/60 hover:text-white hover:bg-white/10 rounded-2xl"
                 >
                   Maybe later
                 </Button>
