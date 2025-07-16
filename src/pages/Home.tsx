@@ -22,18 +22,16 @@ const Home = () => {
                 )}
                 <Link to="/dashboard">
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
-                    className="border-white/20 text-white hover:bg-white/10"
                   >
                     Dashboard
                   </Button>
                 </Link>
                 <Button
                   onClick={signOut}
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  className="border-white/20 text-white hover:bg-white/10"
                 >
                   Sign Out
                 </Button>
@@ -41,9 +39,8 @@ const Home = () => {
             ) : (
               <Link to="/auth">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
-                  className="border-white/20 text-white hover:bg-white/10"
                 >
                   Sign In
                 </Button>

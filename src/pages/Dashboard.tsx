@@ -3,165 +3,203 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
-import { Bot, CreditCard, MessageSquare, Settings, User } from 'lucide-react';
+import { Bot, Crown, MessageSquare, ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Dashboard = () => {
-  const { user, subscribed, signOut } = useAuth();
+  const { user, subscribed, signOut, session } = useAuth();
+  const { toast } = useToast();
+
+  const handleUpgrade = async () => {
+    if (!user || !session) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be logged in to subscribe.",
+      });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      console.error('Stripe checkout error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start checkout. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (!subscribed) {
+    return (
+      <div className="min-h-screen bg-black text-white">
+        <div className="px-4 py-6">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6">
+            <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white">
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Link>
+            <Button
+              onClick={signOut}
+              variant="ghost"
+              size="sm"
+              className="text-gray-400 hover:text-white"
+            >
+              Sign Out
+            </Button>
+          </div>
+
+          {/* Upgrade Required */}
+          <div className="max-w-md mx-auto text-center">
+            <div className="mb-6">
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Crown className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-2xl font-black mb-2">
+                Upgrade to Premium
+              </h1>
+              <p className="text-gray-300 text-sm">
+                Get unlimited AI replies and never get left on read again
+              </p>
+            </div>
+
+            {/* Features */}
+            <div className="bg-white/5 rounded-2xl p-6 mb-6 text-left">
+              <h3 className="font-bold mb-4 text-center">What you get:</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">Unlimited AI replies</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">Perfect responses every time</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">Works on any platform</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm">Cancel anytime</span>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleUpgrade}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl mb-4"
+            >
+              Get Premium - $9.99/mo
+            </Button>
+
+            <p className="text-xs text-gray-400">
+              Secure payment with Stripe • Cancel anytime
+            </p>
+
+            {/* Try Free Link */}
+            <div className="mt-6 pt-6 border-t border-white/10">
+              <p className="text-sm text-gray-400 mb-3">Want to try first?</p>
+              <Link to="/try">
+                <Button variant="outline" className="w-full">
+                  Try 1 Free Reply
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <div className="px-4 py-8">
+      <div className="px-4 py-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <Link to="/" className="text-2xl font-bold">InstaCloser.ai</Link>
-          </div>
-          <div className="flex items-center gap-4">
-            {subscribed && (
-              <span className="text-sm bg-green-600 px-3 py-1 rounded-full font-medium">
-                Premium Active
-              </span>
-            )}
+        <div className="flex justify-between items-center mb-6">
+          <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white">
+            <ArrowLeft className="w-4 h-4" />
+            Home
+          </Link>
+          <div className="flex items-center gap-3">
+            <span className="text-xs bg-green-600 px-3 py-1 rounded-full font-medium">
+              Premium Active
+            </span>
             <Button
               onClick={signOut}
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="border-white/20 text-white hover:bg-white/10"
+              className="text-gray-400 hover:text-white"
             >
               Sign Out
             </Button>
           </div>
         </div>
 
-        {/* Welcome Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-black mb-4">
-            Welcome, {user?.email?.split('@')[0] || 'User'}!
+        {/* Welcome */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-black mb-2">
+            Welcome back!
           </h1>
-          <p className="text-xl text-gray-300 mb-6">
-            {subscribed 
-              ? 'Your premium account is active. Generate unlimited AI replies!'
-              : 'Upgrade to premium for unlimited AI-powered DM replies.'
-            }
+          <p className="text-gray-300">
+            You have unlimited AI replies
           </p>
-          
-          <div className="flex gap-4 justify-center">
-            <Link to="/try">
-              <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 font-bold rounded-lg">
-                {subscribed ? 'Generate AI Replies' : 'Try AI (Limited)'}
-              </Button>
-            </Link>
-            {!subscribed && (
-              <Button 
-                onClick={() => window.location.href = 'https://buy.stripe.com/test_aFa5kEcVagA855I3YFb7y01'}
-                variant="outline"
-                className="border-white/20 text-white hover:bg-white/10 px-8 py-3"
-              >
-                Upgrade to Premium
-              </Button>
-            )}
-          </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Account Type</CardTitle>
-              <User className="h-4 w-4 text-gray-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {subscribed ? 'Premium' : 'Free'}
-              </div>
-              <p className="text-xs text-gray-400">
-                {subscribed ? 'Unlimited access' : 'Limited access'}
+        {/* Main Action */}
+        <div className="max-w-md mx-auto">
+          <Card className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border-purple-500/30 mb-6">
+            <CardContent className="p-6 text-center">
+              <Bot className="w-12 h-12 mx-auto mb-4 text-purple-400" />
+              <h2 className="text-xl font-bold mb-2">AI Reply Generator</h2>
+              <p className="text-gray-300 text-sm mb-4">
+                Generate perfect replies to any DM
               </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">AI Replies</CardTitle>
-              <Bot className="h-4 w-4 text-gray-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">
-                {subscribed ? '∞' : '1'}
-              </div>
-              <p className="text-xs text-gray-400">
-                {subscribed ? 'Unlimited' : 'Per session'}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-400">Status</CardTitle>
-              <MessageSquare className="h-4 w-4 text-gray-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">Active</div>
-              <p className="text-xs text-gray-400">Ready to use</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Bot className="h-5 w-5" />
-                AI Reply Generator
-              </CardTitle>
-              <CardDescription className="text-gray-400">
-                Generate perfect replies to any DM using AI
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
               <Link to="/try">
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 font-bold">
                   Start Generating Replies
                 </Button>
               </Link>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
-                Subscription
-              </CardTitle>
-              <CardDescription className="text-gray-400">
-                {subscribed ? 'Manage your premium subscription' : 'Upgrade for unlimited access'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {subscribed ? (
-                <Link to="/success">
-                  <Button variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">
-                    Manage Subscription
-                  </Button>
-                </Link>
-              ) : (
-                <Button 
-                  onClick={() => window.location.href = 'https://buy.stripe.com/test_aFa5kEcVagA855I3YFb7y01'}
-                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
-                >
-                  Upgrade to Premium - $9.99/mo
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <Card className="bg-white/5 border-white/10">
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-green-400">∞</div>
+                <p className="text-xs text-gray-400">Replies Available</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-white/5 border-white/10">
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-purple-400">Premium</div>
+                <p className="text-xs text-gray-400">Account Type</p>
+              </CardContent>
+            </Card>
+          </div>
 
-        {/* Footer */}
-        <div className="text-center mt-12">
-          <p className="text-gray-400 text-sm">
-            Need help? Contact us at support@instacloser.ai
-          </p>
+          {/* Help */}
+          <div className="text-center">
+            <p className="text-gray-400 text-sm">
+              Need help? Email support@instacloser.ai
+            </p>
+          </div>
         </div>
       </div>
     </div>
