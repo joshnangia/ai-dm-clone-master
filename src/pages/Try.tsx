@@ -250,7 +250,8 @@ const Try = () => {
               <p className="text-lg leading-relaxed mb-4">{generatedReply}</p>
               <Button
                 onClick={copyToClipboard}
-                className="w-full bg-white text-black hover:bg-gray-100 font-bold py-3 rounded-xl flex items-center justify-center gap-2"
+                variant="secondary"
+                className="w-full font-bold py-3 rounded-xl flex items-center justify-center gap-2"
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                 {copied ? 'Copied!' : 'Copy Reply'}
@@ -264,7 +265,7 @@ const Try = () => {
                   setDmText('');
                 }}
                 variant="outline"
-                className="w-full border-white/20 text-white hover:bg-white/10"
+                className="w-full"
               >
                 Generate Another Reply
               </Button>

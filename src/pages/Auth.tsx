@@ -19,7 +19,7 @@ const Auth = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate('/');
+        navigate('/dashboard');
       }
     };
     
@@ -69,7 +69,7 @@ const Auth = () => {
             title: "Welcome back!",
             description: "You've been logged in successfully.",
           });
-          navigate('/');
+          navigate('/dashboard');
         }
       } else {
         const { data, error } = await supabase.auth.signUp({
