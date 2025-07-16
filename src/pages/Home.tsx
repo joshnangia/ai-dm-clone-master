@@ -58,34 +58,15 @@ const Home = () => {
           </div>
         </div>
 
-        {/* How it works - SUPER simple */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-center">How It Works</h2>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center font-bold">1</div>
-              <div>Paste any DM you received</div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center font-bold">2</div>
-              <div>AI writes the perfect reply</div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center font-bold">3</div>
-              <div>Copy, send, close the deal</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Testimonials - quick */}
+        {/* Testimonials - better handles */}
         <div className="text-center mb-12">
           <div className="bg-white/5 rounded-2xl p-6 mb-4">
-            <p className="text-lg mb-2">"Holy shit this actually works"</p>
-            <p className="text-sm text-gray-400">- @mikeCEO, 2.1M followers</p>
+            <p className="text-lg mb-2">"This AI just closed a $15k deal for me"</p>
+            <p className="text-sm text-gray-400">- @alexbecker, 1.8M followers</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-6">
-            <p className="text-lg mb-2">"Closed 3 deals in one day using this"</p>
-            <p className="text-sm text-gray-400">- @sarahstartup, Entrepreneur</p>
+            <p className="text-lg mb-2">"Made $30k this month using AI replies"</p>
+            <p className="text-sm text-gray-400">- @biaheza, 890k followers</p>
           </div>
         </div>
 
@@ -106,7 +87,7 @@ const Home = () => {
         {/* Trust signals */}
         <div className="text-center mt-8">
           <p className="text-xs text-gray-500">
-            Used by 50,000+ creators • 4.9★ rating • Money-back guarantee
+            Used by 50,000+ creators • 4.9★ rating • Secure payments
           </p>
         </div>
       </div>

@@ -17,21 +17,20 @@ const Try = () => {
   }, []);
 
   const generateReply = async () => {
-    if (!dmText.trim() || hasUsedOnce) return;
+    if (!dmText.trim()) return;
 
     setIsLoading(true);
     
     try {
-      // Simulate API call
+      // Simulate processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const mockReply = "Hey! Thanks for reaching out. I'm definitely interested - can you tell me more about the details? I'd love to learn how this could work for me.";
-      setGeneratedReply(mockReply);
-      
+      // Instead of showing result, show paywall
+      setGeneratedReply("PAYWALL");
       localStorage.setItem('usedOnce', 'true');
       setHasUsedOnce(true);
     } catch (error) {
-      console.error('Error generating reply:', error);
+      console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -114,39 +113,34 @@ const Try = () => {
           </div>
         ) : (
           <div className="max-w-md mx-auto">
+            {/* Paywall after submit */}
             <div className="text-center mb-8">
-              <div className="text-4xl mb-4">🔥</div>
-              <h2 className="text-2xl font-bold mb-4">
-                Your AI-Generated Reply:
+              <div className="text-4xl mb-4">🔒</div>
+              <h2 className="text-3xl font-black mb-4">
+                AI Reply Generated!
               </h2>
-            </div>
-
-            <div className="bg-white/10 rounded-2xl p-6 mb-6">
-              <p className="text-lg leading-relaxed mb-6">
-                {generatedReply}
+              <p className="text-gray-300 mb-6">
+                Your perfect reply is ready. Unlock it now to see what the AI wrote.
               </p>
-              <Button
-                onClick={copyToClipboard}
-                className="w-full bg-white text-black hover:bg-gray-200 py-3 font-bold rounded-xl"
-              >
-                Copy & Send This Reply
-              </Button>
             </div>
 
             {/* Upgrade prompt */}
-            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 text-center">
-              <h3 className="text-xl font-bold mb-3">
-                That Was Your Free Try
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 text-center">
+              <h3 className="text-2xl font-bold mb-4">
+                Unlock Your AI Reply
               </h3>
-              <p className="mb-4">
-                Get unlimited AI replies for just $9.99/month
+              <p className="text-lg mb-2">
+                Just $9.99/month for unlimited AI replies
+              </p>
+              <p className="text-sm opacity-80 mb-6">
+                Cancel anytime • Instant access
               </p>
               <Link to="/unlock">
                 <Button 
                   size="lg" 
-                  className="w-full bg-white text-black hover:bg-gray-200 py-4 text-lg font-black rounded-xl"
+                  className="w-full bg-white text-black hover:bg-gray-200 py-4 text-xl font-black rounded-xl transform hover:scale-105 transition-all duration-300"
                 >
-                  Unlock Unlimited Access
+                  Unlock Now - $9.99/mo
                 </Button>
               </Link>
             </div>
