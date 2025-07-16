@@ -80,41 +80,8 @@ const Try = () => {
     }
   };
 
-  const handleStripeCheckout = async () => {
-    if (!user || !session) {
-      toast({
-        title: "Please sign in",
-        description: "You need to be logged in to subscribe.",
-      });
-      navigate('/auth');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (error) throw error;
-
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      } else {
-        throw new Error('No checkout URL received');
-      }
-    } catch (error) {
-      console.error('Stripe checkout error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start checkout. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+  const handleStripeCheckout = () => {
+    window.open('https://buy.stripe.com/test_6oU9AU6QO0sY9Qn6HKdAk07', '_blank');
   };
 
   const copyToClipboard = async () => {
@@ -156,7 +123,6 @@ const Try = () => {
               size="lg" 
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300"
               onClick={handleStripeCheckout}
-              disabled={isLoading}
             >
             Unlock Unlimited Access (TEST)
           </Button>
@@ -226,7 +192,6 @@ const Try = () => {
               size="lg" 
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300 mb-4"
               onClick={handleStripeCheckout}
-              disabled={isLoading}
             >
               Get Unlimited Access - $9.99/mo (TEST)
             </Button>
