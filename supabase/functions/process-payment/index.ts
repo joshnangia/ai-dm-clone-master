@@ -7,33 +7,65 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[PROCESS-PAYMENT] ${step}${detailsStr}`);
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { sessionId } = await req.json();
+    logStep("Function started");
+    
+    const requestBody = await req.json();
+    logStep("Request body received", requestBody);
+    
+    const { sessionId } = requestBody;
     
     if (!sessionId) {
+      logStep("ERROR: No session ID provided");
       throw new Error("Session ID is required");
     }
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    logStep("Session ID received", { sessionId });
+
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      logStep("ERROR: No Stripe secret key found");
+      throw new Error("Stripe secret key not configured");
+    }
+
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
     });
 
+    logStep("Retrieving Stripe session");
     // Get checkout session
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    logStep("Stripe session retrieved", { 
+      payment_status: session.payment_status,
+      customer_email: session.customer_details?.email,
+      customer_id: session.customer
+    });
     
     if (session.payment_status !== "paid") {
-      throw new Error("Payment not completed");
+      logStep("ERROR: Payment not completed", { payment_status: session.payment_status });
+      throw new Error(`Payment not completed. Status: ${session.payment_status}`);
     }
 
-    const email = session.customer_details?.email;
+    const email = session.customer_details?.email || session.metadata?.user_email;
     if (!email) {
+      logStep("ERROR: No email found", { 
+        customer_details: session.customer_details,
+        metadata: session.metadata 
+      });
       throw new Error("No email found in session");
     }
+
+    logStep("Email extracted", { email });
 
     // Create Supabase client with service role
     const supabase = createClient(

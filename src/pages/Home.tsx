@@ -241,9 +241,9 @@ const Home = () => {
               </div>
               
               <Link to="/auth">
-                <Button className="px-10 py-6 text-2xl font-black rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:shadow-[0_0_50px_rgba(168,85,247,0.8)] transform hover:scale-105 transition-all duration-300 mb-4">
-                  <Rocket className="mr-3 w-6 h-6" />
-                  Start Trial – $9.99/mo
+                <Button className="px-6 py-4 text-lg md:text-xl font-black rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:shadow-[0_0_50px_rgba(168,85,247,0.8)] transform hover:scale-105 transition-all duration-300 mb-4">
+                  <Rocket className="mr-2 w-5 h-5" />
+                  <span className="whitespace-nowrap">Start Trial – $9.99/mo</span>
                 </Button>
               </Link>
               
@@ -274,8 +274,8 @@ const Home = () => {
       {/* Sticky CTA Bar for Mobile */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t border-purple-500/30 p-4 z-50">
         <Link to="/try">
-          <Button className="w-full py-4 text-lg font-black rounded-full bg-gradient-to-r from-purple-600 to-pink-600">
-            Try FREE Now
+          <Button className="w-full py-4 text-base font-black rounded-full bg-gradient-to-r from-purple-600 to-pink-600">
+            <span className="whitespace-nowrap">Try FREE Now</span>
           </Button>
         </Link>
       </div>
