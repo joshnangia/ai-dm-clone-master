@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -115,7 +115,7 @@ const Dashboard = () => {
     );
   }
 
-  const loadConversations = async () => {
+  const loadConversations = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('conversations')
@@ -128,14 +128,16 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error loading conversations:', error);
     }
-  };
+  }, []);
 
-  const loadUserProfile = async () => {
+  const loadUserProfile = useCallback(async () => {
+    if (!user?.id) return;
+    
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user?.id)
+        .eq('id', user.id)
         .single();
 
       if (!error && data) {
@@ -156,7 +158,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error loading profile:', error);
     }
-  };
+  }, [user?.id]);
 
   const saveUserProfile = async () => {
     try {
