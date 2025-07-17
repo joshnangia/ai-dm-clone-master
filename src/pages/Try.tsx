@@ -1,381 +1,308 @@
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card } from '@/components/ui/card';
+import { Link } from 'react-router-dom';
+import { Copy, Zap, Brain, Target, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, Zap, Star, Crown, Brain, Target, Sparkles, X } from 'lucide-react';
-
-const SALES_GOALS = [
-  { value: 'sell_course', label: 'Sell My Course' },
-  { value: 'sell_product', label: 'Sell My Product' },
-  { value: 'book_call', label: 'Book a Sales Call' },
-  { value: 'get_number', label: 'Get Their Number' },
-  { value: 'schedule_demo', label: 'Schedule a Demo' },
-  { value: 'build_interest', label: 'Build Interest' },
-  { value: 'close_deal', label: 'Close the Deal' },
-  { value: 'upsell', label: 'Upsell/Cross-sell' },
-  { value: 'convert_lead', label: 'Convert to Lead' }
-];
 
 const Try = () => {
-  const { toast } = useToast();
   const [dmText, setDmText] = useState('');
   const [userHandle, setUserHandle] = useState('');
   const [goal, setGoal] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedReply, setGeneratedReply] = useState('');
-  const [hasUsedFreeReply, setHasUsedFreeReply] = useState(false);
-  const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
-  const [analysisSteps, setAnalysisSteps] = useState<string[]>([]);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [reply, setReply] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [analysis, setAnalysis] = useState({
+    messageType: '',
+    tone: '',
+    context: '',
+    strategy: ''
+  });
+  const [hasTriedFree, setHasTriedFree] = useState(false);
+  const { toast } = useToast();
 
-  const generateFreeReply = async () => {
-    if (!dmText.trim() || !userHandle || !goal) return;
+  const simulateAnalysis = () => {
+    setShowAnalysis(true);
+    
+    // Determine message type and context
+    const lowerText = dmText.toLowerCase();
+    let messageType = '';
+    let tone = '';
+    let context = '';
+    let strategy = '';
 
-    setIsGenerating(true);
-    
-    // Show analysis popup
-    setShowAnalysisPopup(true);
-    setCurrentStep(0);
-    
-    // Analysis steps
-    const steps = [
-      "🧠 Analyzing message tone and context...",
-      "🎯 Detecting conversation type (casual/sales/objection)...", 
-      "💡 Identifying personality patterns...",
-      "🔥 Crafting psychological hooks...",
-      "⚡ Optimizing for conversion..."
-    ];
-    setAnalysisSteps(steps);
+    if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('what\'s up') || lowerText.includes('how are you')) {
+      messageType = 'Casual/Social';
+      tone = 'Friendly & Relaxed';
+      context = 'Opening conversation or greeting';
+      strategy = 'Match their energy, build rapport naturally';
+    } else if (lowerText.includes('price') || lowerText.includes('cost') || lowerText.includes('expensive') || lowerText.includes('buy') || lowerText.includes('purchase')) {
+      messageType = 'Sales/Business';
+      tone = 'Professional & Persuasive';
+      context = 'Price or purchase inquiry';
+      strategy = 'Address concerns, show value, create urgency';
+    } else if (lowerText.includes('interested') || lowerText.includes('tell me more') || lowerText.includes('course') || lowerText.includes('service')) {
+      messageType = 'Business Interest';
+      tone = 'Engaged & Curious';
+      context = 'Showing interest in offer';
+      strategy = 'Provide value, build excitement, guide to next step';
+    } else {
+      messageType = 'General Inquiry';
+      tone = 'Neutral & Helpful';
+      context = 'Information seeking';
+      strategy = 'Provide helpful response, build connection';
+    }
+
+    setAnalysis({
+      messageType,
+      tone,
+      context,
+      strategy
+    });
+  };
+
+  const handleGenerate = async () => {
+    if (!dmText.trim()) {
+      toast({
+        title: "Please enter a message",
+        description: "Add the DM text you want to respond to.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    simulateAnalysis();
 
     try {
-      // Simulate sophisticated AI analysis
-      for (let i = 0; i < steps.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setCurrentStep(i + 1);
-      }
-      
-      // Smart context-aware replies
-      const casualMessages = ['hey', 'hi', 'hello', 'how are you', 'whats up', 'what\'s up', 'how\'s your day'];
-      const isCasual = casualMessages.some(casual => dmText.toLowerCase().includes(casual)) && dmText.length < 50;
-      
-      let reply;
-      
-      if (isCasual) {
-        // Natural, conversational responses for casual messages
-        const casualReplies = [
-          "Hey! Going great, thanks for asking! How's your day treating you?",
-          "Hi there! Doing well over here - how about yourself?", 
-          "Hey! Pretty good day so far, appreciate you checking in! What's been going on with you?",
-          "Hi! Can't complain - hope you're having a solid day too!"
-        ];
-        reply = casualReplies[Math.floor(Math.random() * casualReplies.length)];
+      // Simulate the analysis steps with realistic timing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Mock AI response based on message type
+      const lowerText = dmText.toLowerCase();
+      let mockReply = '';
+
+      if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('what\'s up') || lowerText.includes('how are you')) {
+        mockReply = "Hey! Going well, thanks for asking. How's your day treating you?";
+      } else if (lowerText.includes('course') && lowerText.includes('how')) {
+        mockReply = "It's been incredible! Just had 3 students hit their first $10k month this week. The results speak for themselves - are you looking to level up your game too?";
+      } else if (lowerText.includes('price') || lowerText.includes('cost') || lowerText.includes('expensive')) {
+        mockReply = "I totally get that - it's an investment. But think about it this way: what's the cost of staying where you are for another year? Most of my students make back their investment in the first month.";
+      } else if (lowerText.includes('interested') || lowerText.includes('tell me more')) {
+        mockReply = "Perfect timing! I just opened up a few spots in my next cohort. The transformation my students see is insane. Want me to send you some of their success stories?";
       } else {
-        // Strategic sales responses based on goal
-        const smartReplies = {
-          sell_course: `I can tell you're thinking about this seriously! I've actually been working with people in similar situations and seeing some incredible breakthroughs. Quick question - when you say you're interested, are you looking to make real changes in the next 30 days or still exploring?`,
-          sell_product: `I appreciate you reaching out! This is exactly the kind of challenge I love helping people solve. Based on what you're saying, it sounds like you're ready for a real solution. Are you looking to handle this soon or just gathering info for now?`,
-          book_call: `Great question! I'd actually love to give you a personalized take on this since everyone's situation is unique. I have a few strategy calls open this week - would you be up for a quick 15-min chat? I think I can give you some real clarity.`,
-          get_number: `Absolutely! There's actually quite a bit I'd love to share about this - probably too much for DMs honestly. What's the best number to reach you? I can shoot you a quick message with some insights that might be exactly what you need.`,
-          schedule_demo: `Perfect timing! I'm actually doing some personalized demos this week to show exactly how this works for different situations. I've got 2 spots left - would Thursday at 2 or Friday at 10 work better for you?`,
-          build_interest: `I love that you're asking about this! Most people don't even realize this opportunity exists right now. Without giving away everything here - are you someone who moves quickly when you see something that makes sense?`,
-          close_deal: `You know what? I can tell you're serious about making this happen. Since you've been asking all the right questions, I want to make this simple for you. Ready to move forward today?`,
-          upsell: `Since you're already getting results with what you have, you're going to love what this next level can do. I'm only offering this to people who are already succeeding - and that's exactly who you are. Interested in hearing more?`,
-          convert_lead: `I can see you're really thinking this through, which I respect. Here's what I've learned - the people who succeed are the ones who trust their instincts and take action. Does this feel like the right move for you?`
-        };
-        
-        reply = smartReplies[goal as keyof typeof smartReplies] || 
-          `Thanks for reaching out! I can definitely help with this. When you say you're interested, are you looking to move forward soon or still in the research phase? Want to make sure I give you exactly what you need.`;
+        mockReply = "That's a great question! I love that you're thinking strategically about this. Most successful people ask exactly what you're asking. Here's what I've found works best...";
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setGeneratedReply(reply);
-      setHasUsedFreeReply(true);
-      setShowAnalysisPopup(false);
+
+      setReply(mockReply);
+      setHasTriedFree(true);
       
       toast({
-        title: "Smart reply generated!",
-        description: "Context-aware AI analysis complete!",
+        title: "Reply generated!",
+        description: "Your AI-powered response is ready to copy.",
       });
     } catch (error) {
-      console.error('Error generating free reply:', error);
-      setShowAnalysisPopup(false);
       toast({
-        title: "Error",
-        description: "Failed to generate reply. Please try again.",
+        title: "Something went wrong",
+        description: "Please try again in a moment.",
         variant: "destructive",
       });
     } finally {
-      setIsGenerating(false);
+      setLoading(false);
     }
   };
 
-  const handleTryAgain = () => {
-    if (hasUsedFreeReply) {
-      setShowAnalysisPopup(true);
-      setCurrentStep(0);
-      
-      const steps = [
-        "🔒 Checking subscription status...",
-        "💳 Free trial already used...",
-        "⭐ Premium features required..."
-      ];
-      setAnalysisSteps(steps);
-      
-      setTimeout(() => {
-        setCurrentStep(1);
-        setTimeout(() => {
-          setCurrentStep(2);
-          setTimeout(() => {
-            setCurrentStep(3);
-            setTimeout(() => {
-              setShowAnalysisPopup(false);
-              // Show upgrade modal instead of allowing generation
-            }, 800);
-          }, 800);
-        }, 800);
-      }, 800);
-    }
-  };
-
-  const copyToClipboard = async (text: string) => {
-    await navigator.clipboard.writeText(text);
+  const copyReply = () => {
+    navigator.clipboard.writeText(reply);
     toast({
       title: "Copied!",
-      description: "Your sales reply is ready to send.",
+      description: "Reply copied to clipboard.",
     });
   };
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="bg-black border-b border-gray-900 sticky top-0 z-20">
-        <div className="px-4 py-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Link>
-            <Link to="/auth">
-              <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
-                Sign In
-              </Button>
+      {/* Navigation */}
+      <nav className="p-6 border-b border-gray-800">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          <Link to="/" className="text-2xl font-black">
+            InstaReply.co
+          </Link>
+          <div className="flex items-center space-x-4">
+            <Link to="/auth" className="text-gray-400 hover:text-white">
+              Sign In
             </Link>
           </div>
         </div>
-      </div>
+      </nav>
 
-      <div className="px-4 py-8 max-w-2xl mx-auto">
-        {/* Hero Section */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Zap className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Try Sales Machine Free
+      <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-6xl font-black mb-6">
+            Try InstaReply AI
           </h1>
-          <p className="text-xl text-gray-300">
-            Generate your first money-making DM reply
+          <p className="text-xl text-gray-300 mb-8">
+            See how our AI responds to your DMs. First reply is free!
           </p>
         </div>
 
-        {!hasUsedFreeReply ? (
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 mb-8">
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Input Section */}
+          <Card className="p-6 bg-gray-900 border-gray-800">
             <div className="space-y-6">
-              {/* User Info & Sales Goal */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-white">
-                    Your Handle/Business
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. @fitnessguru, Course Creator"
-                    value={userHandle}
-                    onChange={(e) => setUserHandle(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-purple-500/50"
-                    disabled={isGenerating}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-white">
-                    Sales Goal
-                  </label>
-                  <Select value={goal} onValueChange={setGoal}>
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                      <SelectValue placeholder="What do you want to sell?" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700">
-                      {SALES_GOALS.map((goalOption) => (
-                        <SelectItem key={goalOption.value} value={goalOption.value} className="text-white hover:bg-gray-700">
-                          {goalOption.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Message Input */}
               <div>
-                <label className="block text-sm font-medium mb-2 text-white">
-                  Their Message
-                </label>
+                <Label htmlFor="dm-text" className="text-white font-medium">
+                  DM Message
+                </Label>
                 <Textarea
-                  placeholder="Paste what they sent you..."
+                  id="dm-text"
+                  placeholder="Paste the message you received..."
                   value={dmText}
                   onChange={(e) => setDmText(e.target.value)}
-                  className="min-h-32 resize-none bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
-                  disabled={isGenerating}
+                  className="mt-2 bg-black border-gray-700 text-white min-h-[100px]"
                 />
               </div>
 
-              <Button
-                onClick={generateFreeReply}
-                disabled={isGenerating || !dmText.trim() || !userHandle || !goal}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 transition-all hover:scale-105"
-              >
-                {isGenerating ? (
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Generating Your Free Reply...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center space-x-2">
-                    <Star className="w-4 h-4" />
-                    <span>Generate Free Sales Reply</span>
-                  </div>
-                )}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 mb-8 text-center">
-            <Crown className="w-12 h-12 mx-auto mb-4 text-purple-400" />
-            <h3 className="text-xl font-bold text-white mb-2">Free Reply Used!</h3>
-            <p className="text-gray-300 mb-4">
-              Want unlimited smart DM replies? Upgrade to Pro for just $9.99/month
-            </p>
-            <div className="flex gap-3">
-              <Button 
-                onClick={handleTryAgain}
-                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
-              >
-                Try Again (Demo)
-              </Button>
-              <Link to="/auth" className="flex-1">
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
-                  Upgrade to Pro
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
+              <div>
+                <Label htmlFor="user-handle" className="text-white font-medium">
+                  Your Handle/Business (Optional)
+                </Label>
+                <Input
+                  id="user-handle"
+                  placeholder="@yourhandle or Your Business Name"
+                  value={userHandle}
+                  onChange={(e) => setUserHandle(e.target.value)}
+                  className="mt-2 bg-black border-gray-700 text-white"
+                />
+              </div>
 
-        {/* Generated Reply Display */}
-        {generatedReply && (
-          <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border border-purple-500/30 rounded-xl mb-8">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white">🎯 Your Money-Making Reply</h3>
-                  <p className="text-purple-300 text-sm">Ready to send and start making sales!</p>
-                </div>
+              <div>
+                <Label htmlFor="goal" className="text-white font-medium">
+                  Your Goal (Optional)
+                </Label>
+                <Input
+                  id="goal"
+                  placeholder="e.g., sell course, book call, build interest"
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                  className="mt-2 bg-black border-gray-700 text-white"
+                />
+              </div>
+
+              {!hasTriedFree ? (
                 <Button
-                  onClick={() => copyToClipboard(generatedReply)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                  onClick={handleGenerate}
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 font-bold"
                 >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Reply
-                </Button>
-              </div>
-              <div className="bg-black/40 rounded-xl p-4 border border-purple-500/20">
-                <p className="text-white leading-relaxed text-lg">{generatedReply}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Upgrade CTA */}
-        <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
-          <h3 className="text-xl font-bold text-white mb-2">Want Unlimited Sales Replies?</h3>
-          <p className="text-gray-300 mb-4">
-            Join thousands making money with AI-powered DM responses
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6 text-sm">
-            <div className="flex items-center gap-2 text-gray-300">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span>Unlimited replies</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-300">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span>9 sales goals</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-300">
-              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span>Analytics & tracking</span>
-            </div>
-          </div>
-          <Link to="/auth">
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg py-6">
-              Get Sales Machine Pro - $9.99/mo
-            </Button>
-          </Link>
-        </div>
-
-        {/* Analysis Popup */}
-        {showAnalysisPopup && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full mx-auto">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Brain className="w-8 h-8 text-white animate-pulse" />
-                </div>
-                
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  AI Analysis in Progress
-                </h3>
-                
-                <div className="space-y-4 mb-6">
-                  {analysisSteps.map((step, index) => (
-                    <div 
-                      key={index}
-                      className={`flex items-center space-x-3 transition-all duration-500 ${
-                        index < currentStep ? 'text-green-400' : 
-                        index === currentStep ? 'text-purple-400' : 'text-gray-500'
-                      }`}
-                    >
-                      <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
-                        index < currentStep ? 'bg-green-400' : 
-                        index === currentStep ? 'bg-purple-400 animate-pulse' : 'bg-gray-600'
-                      }`} />
-                      <span className="text-sm">{step}</span>
-                      {index < currentStep && <Sparkles className="w-4 h-4 text-green-400" />}
+                  {loading ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      <span>Generating...</span>
                     </div>
-                  ))}
-                </div>
-
-                {currentStep >= analysisSteps.length && (
-                  <div className="text-center">
-                    <Target className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                    <p className="text-green-400 font-semibold">Analysis Complete!</p>
-                  </div>
-                )}
-
-                {hasUsedFreeReply && currentStep >= 3 && (
-                  <div className="text-center mt-6">
-                    <p className="text-purple-300 mb-4">Ready to unlock unlimited smart replies?</p>
+                  ) : (
+                    <>
+                      <Zap className="w-5 h-5 mr-2" />
+                      Generate FREE Reply
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <div className="space-y-4">
+                  <div className="text-center p-4 bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-purple-500/30 rounded-lg">
+                    <h3 className="font-bold text-lg mb-2">🔥 Upgrade for Unlimited</h3>
+                    <p className="text-sm text-gray-300 mb-4">
+                      The actual AI is 10x smarter with unlimited replies, advanced psychology, and custom training.
+                    </p>
                     <Link to="/auth">
-                      <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
-                        Upgrade Now
+                      <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                        Get Unlimited Access - $9.99/mo
                       </Button>
                     </Link>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Analysis & Output Section */}
+          <div className="space-y-6">
+            {/* AI Analysis */}
+            {showAnalysis && (
+              <Card className="p-6 bg-gray-900 border-gray-800">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Brain className="w-5 h-5 text-purple-400" />
+                  <h3 className="font-bold text-lg">AI Analysis</h3>
+                </div>
+                
+                <div className="space-y-4 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Message Type:</span>
+                    <span className="font-medium text-purple-400">{analysis.messageType}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Detected Tone:</span>
+                    <span className="font-medium text-blue-400">{analysis.tone}</span>
+                  </div>
+                  
+                  <div>
+                    <span className="text-gray-400">Context:</span>
+                    <p className="text-white mt-1">{analysis.context}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="text-gray-400">Strategy:</span>
+                    <p className="text-pink-400 mt-1">{analysis.strategy}</p>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Generated Reply */}
+            {reply && (
+              <Card className="p-6 bg-gray-900 border-gray-800">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-2">
+                    <Sparkles className="w-5 h-5 text-pink-400" />
+                    <h3 className="font-bold text-lg">Generated Reply</h3>
+                  </div>
+                  <Button
+                    onClick={copyReply}
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                </div>
+                
+                <div className="bg-black p-4 rounded-lg border border-gray-700">
+                  <p className="text-white leading-relaxed">{reply}</p>
+                </div>
+              </Card>
+            )}
+          </div>
+        </div>
+
+        {/* Upgrade CTA */}
+        {hasTriedFree && (
+          <div className="mt-12 text-center bg-gradient-to-r from-purple-900/30 to-pink-900/30 border border-purple-500/30 rounded-2xl p-8">
+            <h2 className="text-3xl font-bold mb-4">Ready for the Full Power?</h2>
+            <p className="text-xl text-gray-300 mb-6">
+              Upgrade to get unlimited replies, advanced AI psychology, and 10x better responses.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <Link to="/auth">
+                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 text-lg font-bold">
+                  Upgrade Now - $9.99/mo
+                </Button>
+              </Link>
             </div>
           </div>
         )}
