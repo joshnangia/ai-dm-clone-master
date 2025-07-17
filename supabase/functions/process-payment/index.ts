@@ -42,21 +42,32 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Create user account (no email verification needed)
+    // Create user account with default password
+    const defaultPassword = "InstaReply2024!"; // Simple default password for all users
+    
     const { data: authData, error: authError } = await supabase.auth.admin.createUser({
       email,
+      password: defaultPassword,
       email_confirm: true, // Skip email verification
       user_metadata: {
         payment_verified: true,
         stripe_customer_id: session.customer,
         subscription_id: session.subscription,
+        default_password: true
       }
     });
 
+    let userId = authData?.user?.id;
+
     if (authError) {
       console.error("Auth error:", authError);
-      // If user already exists, that's fine - just update their subscription
-      if (!authError.message.includes("already registered")) {
+      // If user already exists, get their ID and update subscription
+      if (authError.message.includes("already registered")) {
+        const { data: existingUsers } = await supabase.auth.admin.listUsers();
+        const existingUser = existingUsers.users.find(u => u.email === email);
+        userId = existingUser?.id;
+        console.log("User already exists, updating subscription for:", email);
+      } else {
         throw authError;
       }
     }
@@ -64,7 +75,7 @@ serve(async (req) => {
     // Update subscribers table
     await supabase.from("subscribers").upsert({
       email,
-      user_id: authData?.user?.id,
+      user_id: userId,
       stripe_customer_id: session.customer,
       subscribed: true,
       subscription_tier: "premium",
@@ -77,7 +88,8 @@ serve(async (req) => {
     return new Response(JSON.stringify({ 
       success: true, 
       email,
-      userId: authData?.user?.id 
+      userId: userId,
+      defaultPassword: defaultPassword
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

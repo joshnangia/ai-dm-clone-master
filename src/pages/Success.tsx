@@ -37,15 +37,38 @@ const Success = () => {
       setAccountCreated(true);
       
       toast({
-        title: "Account created successfully!",
-        description: `Welcome to InstaReply AI! Your account has been created with ${data.email}`,
+        title: "Payment successful!",
+        description: `Account created for ${data.email}. Auto-signing you in...`,
       });
 
-      // Auto-sign in the user (simplified password for demo)
-      setTimeout(() => {
-        // In production, you'd handle this differently
-        navigate('/auth');
-      }, 3000);
+      // Auto-sign in the user with the default password
+      setTimeout(async () => {
+        try {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.defaultPassword
+          });
+
+          if (signInError) {
+            console.error('Auto sign-in failed:', signInError);
+            toast({
+              title: "Sign in manually",
+              description: `Use email: ${data.email} and password: ${data.defaultPassword}`,
+            });
+          } else {
+            toast({
+              title: "Signed in successfully!",
+              description: "Redirecting to dashboard...",
+            });
+            // Redirect to dashboard
+            setTimeout(() => {
+              navigate('/dashboard');
+            }, 1000);
+          }
+        } catch (autoSignInError) {
+          console.error('Auto sign-in error:', autoSignInError);
+        }
+      }, 2000);
 
     } catch (error: any) {
       console.error('Payment processing error:', error);
