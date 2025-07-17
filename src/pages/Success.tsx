@@ -34,6 +34,7 @@ const Success = () => {
 
       setUserEmail(data.email);
       setAccountCreated(true);
+      setProcessing(false); // Fixed: Set processing to false on success
       
       toast({
         title: "Payment successful!",
@@ -43,6 +44,11 @@ const Success = () => {
     } catch (error: any) {
       console.error('Payment processing error:', error);
       setProcessing(false);
+      toast({
+        title: "Payment Error",
+        description: "There was an issue processing your payment. Please contact support.",
+        variant: "destructive",
+      });
     }
   };
 

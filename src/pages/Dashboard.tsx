@@ -446,7 +446,7 @@ const Dashboard = () => {
 
         {/* Centered Upgrade Modal */}
         <div className="absolute inset-0 flex items-center justify-center p-4">
-          <div className="bg-black/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-8 max-w-md w-full shadow-2xl">
+          <div className="bg-black/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-4 sm:p-8 max-w-md w-full shadow-2xl">
             <div className="text-center">
               {/* Icon */}
               <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -508,22 +508,22 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white">
       {/* Enhanced Header */}
       <div className="bg-black/80 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-20">
-        <div className="px-6 py-4">
+        <div className="px-4 sm:px-6 py-4">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-3 text-gray-400 hover:text-purple-400 transition-all duration-300 group">
-              <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-              <span className="font-medium">Home</span>
+            <Link to="/" className="flex items-center gap-2 sm:gap-3 text-gray-400 hover:text-purple-400 transition-all duration-300 group">
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
+              <span className="font-medium text-sm sm:text-base">Home</span>
             </Link>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm border border-purple-500/30 px-4 py-2 rounded-full">
-                <Crown className="w-4 h-4 text-purple-400" />
-                <span className="text-sm font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Pro Member</span>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm border border-purple-500/30 px-2 sm:px-4 py-1 sm:py-2 rounded-full">
+                <Crown className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
+                <span className="text-xs sm:text-sm font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Pro</span>
               </div>
               <Button
                 onClick={signOut}
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-300"
+                className="text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4"
               >
                 Sign Out
               </Button>
@@ -532,20 +532,20 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="px-6 py-8 max-w-7xl mx-auto">
+      <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto">
         {/* Enhanced Header with Settings */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-purple-600/10 border border-purple-500/30 rounded-full px-4 py-2">
-            <Zap className="w-4 h-4 text-purple-400" />
-            <span className="text-sm text-purple-300">Sales Machine Pro Dashboard</span>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6 sm:mb-8">
+          <div className="inline-flex items-center gap-2 bg-purple-600/10 border border-purple-500/30 rounded-full px-3 sm:px-4 py-2">
+            <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-purple-400" />
+            <span className="text-xs sm:text-sm text-purple-300">Sales Machine Pro Dashboard</span>
           </div>
           <Button
             onClick={() => setShowSettings(!showSettings)}
             variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-white hover:bg-gray-800/50"
+            className="text-gray-400 hover:text-white hover:bg-gray-800/50 text-xs sm:text-sm"
           >
-            <Settings className="w-4 h-4 mr-2" />
+            <Settings className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             Settings
           </Button>
         </div>
@@ -580,66 +580,66 @@ const Dashboard = () => {
         )}
 
         {/* Enhanced Hero Section */}
-        <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+        <div className="text-center mb-8 sm:mb-12 animate-fade-in">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
             Turn DMs Into Revenue
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-300 max-w-2xl mx-auto px-4">
             Generate high-converting sales replies powered by advanced AI psychology frameworks
           </p>
         </div>
 
         {/* Enhanced Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-fade-in">
-          <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="w-6 h-6 text-white" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8 sm:mb-12 animate-fade-in">
+          <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-4">
+              <MessageCircle className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">{conversations.length}</div>
-            <p className="text-sm text-purple-300">Sales Replies Generated</p>
+            <div className="text-xl sm:text-3xl font-bold text-white mb-1">{conversations.length}</div>
+            <p className="text-xs sm:text-sm text-purple-300">Sales Replies</p>
           </div>
           
-          <div className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border border-pink-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20">
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-600 to-pink-700 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Target className="w-6 h-6 text-white" />
+          <div className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border border-pink-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20">
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-pink-600 to-pink-700 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-4">
+              <Target className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">∞</div>
-            <p className="text-sm text-pink-300">Unlimited Access</p>
+            <div className="text-xl sm:text-3xl font-bold text-white mb-1">∞</div>
+            <p className="text-xs sm:text-sm text-pink-300">Unlimited</p>
           </div>
           
-          <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <BarChart3 className="w-6 h-6 text-white" />
+          <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-4">
+              <BarChart3 className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">{userProfile.saved_handles.length}</div>
-            <p className="text-sm text-purple-300">Saved Handles</p>
+            <div className="text-xl sm:text-3xl font-bold text-white mb-1">{userProfile.saved_handles.length}</div>
+            <p className="text-xs sm:text-sm text-purple-300">Handles</p>
           </div>
           
-          <div className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border border-pink-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20">
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-600 to-pink-700 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <DollarSign className="w-6 h-6 text-white" />
+          <div className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border border-pink-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20">
+            <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-pink-600 to-pink-700 rounded-lg sm:rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-4">
+              <DollarSign className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">97%</div>
-            <p className="text-sm text-pink-300">Success Rate</p>
+            <div className="text-xl sm:text-3xl font-bold text-white mb-1">97%</div>
+            <p className="text-xs sm:text-sm text-pink-300">Success</p>
           </div>
         </div>
 
         {/* Enhanced Generate Section */}
-        <div className="bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-700/50 backdrop-blur-sm rounded-3xl mb-12 animate-scale-in overflow-hidden">
+        <div className="bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-700/50 backdrop-blur-sm rounded-2xl sm:rounded-3xl mb-8 sm:mb-12 animate-scale-in overflow-hidden">
           <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 p-1">
-            <div className="bg-gray-900/80 rounded-3xl p-8">
-              <div className="flex items-center justify-between mb-8">
+            <div className="bg-gray-900/80 rounded-2xl sm:rounded-3xl p-4 sm:p-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
                 <div>
-                  <h2 className="text-3xl font-bold text-white mb-2">🎯 AI Sales Reply Generator</h2>
-                  <p className="text-gray-400 text-lg">
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2">🎯 AI Sales Reply Generator</h2>
+                  <p className="text-gray-400 text-sm sm:text-base lg:text-lg">
                     Transform any DM into a money-making opportunity
                   </p>
                 </div>
                 <Button
                   onClick={() => setShowNewReply(!showNewReply)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-purple-500/30"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-purple-500/30 w-full sm:w-auto"
                 >
-                  <Plus className="w-5 h-5 mr-2" />
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Generate New Reply
                 </Button>
               </div>
