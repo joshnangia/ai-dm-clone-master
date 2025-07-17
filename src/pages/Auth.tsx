@@ -44,7 +44,10 @@ const Auth = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            email_confirm: false // Skip email verification
+          }
         }
       });
 
@@ -57,7 +60,7 @@ const Auth = () => {
       } else {
         toast({
           title: "Account created!",
-          description: "Check your email to verify your account.",
+          description: "Welcome to InstaReply! No verification needed.",
         });
         setStep('preview');
       }
