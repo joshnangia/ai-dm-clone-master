@@ -32,26 +32,26 @@ interface Conversation {
 }
 
 const CONVERSATION_TYPES = [
-  { value: 'cold_dm', label: '🎯 Cold DM' },
-  { value: 'follow_up', label: '📞 Follow-up' },
-  { value: 'objection_handling', label: '🛡️ Objection Handling' },
-  { value: 'closing', label: '💰 Closing' },
-  { value: 'appointment_setting', label: '📅 Appointment Setting' },
-  { value: 'social_proof', label: '⭐ Social Proof' },
-  { value: 'value_proposition', label: '💎 Value Proposition' },
-  { value: 'urgency_scarcity', label: '⚡ Urgency/Scarcity' }
+  { value: 'cold_dm', label: 'Cold DM' },
+  { value: 'follow_up', label: 'Follow-up Message' },
+  { value: 'story_reply', label: 'Story Reply' },
+  { value: 'casual_chat', label: 'Casual Conversation' },
+  { value: 'flirty', label: 'Flirty Message' },
+  { value: 'funny', label: 'Funny/Witty' },
+  { value: 'supportive', label: 'Supportive Message' },
+  { value: 'comeback', label: 'Comeback/Response' }
 ];
 
 const CONVERSATION_GOALS = [
-  { value: 'book_call', label: '📞 Book a Sales Call' },
-  { value: 'get_number', label: '📱 Get Their Phone Number' },
-  { value: 'schedule_demo', label: '🖥️ Schedule a Demo' },
-  { value: 'close_sale', label: '💸 Close the Sale' },
-  { value: 'get_commitment', label: '✅ Get Commitment' },
-  { value: 'overcome_objection', label: '🎯 Overcome Objection' },
-  { value: 'build_rapport', label: '🤝 Build Rapport' },
-  { value: 'create_urgency', label: '⏰ Create Urgency' },
-  { value: 'next_step', label: '➡️ Move to Next Step' }
+  { value: 'get_response', label: 'Get a Response' },
+  { value: 'start_conversation', label: 'Start Conversation' },
+  { value: 'get_number', label: 'Get Their Number' },
+  { value: 'schedule_meetup', label: 'Schedule a Meetup' },
+  { value: 'build_connection', label: 'Build Connection' },
+  { value: 'be_memorable', label: 'Be Memorable' },
+  { value: 'show_interest', label: 'Show Interest' },
+  { value: 'keep_talking', label: 'Keep the Conversation Going' },
+  { value: 'make_laugh', label: 'Make Them Laugh' }
 ];
 
 const Dashboard = () => {
@@ -186,10 +186,10 @@ const Dashboard = () => {
 
   if (!subscribed) {
     return (
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="min-h-screen bg-black text-white">
         <div className="px-4 py-6">
           <div className="flex justify-between items-center mb-6">
-            <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-4 h-4" />
               Back
             </Link>
@@ -197,7 +197,7 @@ const Dashboard = () => {
               onClick={signOut}
               variant="ghost"
               size="sm"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-gray-400 hover:text-white transition-colors"
             >
               Sign Out
             </Button>
@@ -205,54 +205,54 @@ const Dashboard = () => {
 
           <div className="max-w-md mx-auto text-center">
             <div className="mb-8">
-              <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg animate-fade-in">
-                <MessageCircle className="w-10 h-10 text-primary-foreground" />
+              <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg animate-fade-in">
+                <MessageCircle className="w-10 h-10 text-white" />
               </div>
-              <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Unlock InstaDM Pro
               </h1>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-gray-300 text-lg">
                 Generate perfect Instagram DM replies that get responses
               </p>
             </div>
 
-            <div className="bg-card rounded-2xl p-6 mb-6 text-left border shadow-sm">
-              <h3 className="font-semibold mb-4 text-center">What you get:</h3>
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 mb-6 text-left">
+              <h3 className="font-semibold mb-4 text-center text-white">What you get:</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-sm">8 proven conversation types</span>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">8 conversation types</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-sm">9 strategic goals</span>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">9 strategic goals</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-sm">Unlimited AI-generated replies</span>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">Unlimited AI-generated replies</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-sm">Conversation history & analytics</span>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">Conversation history & analytics</span>
                 </div>
               </div>
             </div>
 
             <Button
               onClick={handleUpgrade}
-              className="w-full py-6 text-lg font-semibold rounded-xl mb-4 transition-all hover:scale-105"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-lg font-semibold rounded-xl mb-4 transition-all hover:scale-105"
             >
               Get InstaDM Pro - $9.99/mo
             </Button>
 
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-gray-400">
               Start getting better responses today • Cancel anytime
             </p>
 
-            <div className="mt-6 pt-6 border-t">
-              <p className="text-sm text-muted-foreground mb-3">Want to try first?</p>
+            <div className="mt-6 pt-6 border-t border-gray-800">
+              <p className="text-sm text-gray-400 mb-3">Want to try first?</p>
               <Link to="/try">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full border-purple-600/50 text-purple-400 hover:bg-purple-900/20">
                   Try 1 Free Reply
                 </Button>
               </Link>
@@ -264,25 +264,25 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <div className="bg-background/95 backdrop-blur-sm border-b sticky top-0 z-20">
+      <div className="bg-black/95 backdrop-blur-sm border-b border-gray-900 sticky top-0 z-20">
         <div className="px-4 py-4">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
               <ArrowLeft className="w-4 h-4" />
               Home
             </Link>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-primary px-3 py-1 rounded-full">
-                <Crown className="w-3 h-3 text-primary-foreground" />
-                <span className="text-xs font-semibold text-primary-foreground">Pro</span>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 px-3 py-1 rounded-full">
+                <Crown className="w-3 h-3 text-white" />
+                <span className="text-xs font-semibold text-white">Pro</span>
               </div>
               <Button
                 onClick={signOut}
                 variant="ghost"
                 size="sm"
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-gray-400 hover:text-white transition-colors"
               >
                 Sign Out
               </Button>
@@ -294,82 +294,72 @@ const Dashboard = () => {
       <div className="px-4 py-6 max-w-6xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             InstaDM Pro Dashboard
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-gray-300">
             Generate perfect Instagram DM replies with AI
           </p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 animate-fade-in">
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <MessageCircle className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold">{conversations.length}</div>
-              <p className="text-xs text-muted-foreground">Generated Replies</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <Target className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold">∞</div>
-              <p className="text-xs text-muted-foreground">Remaining</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <TrendingUp className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold">8</div>
-              <p className="text-xs text-muted-foreground">Message Types</p>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow">
-            <CardContent className="p-4 text-center">
-              <Zap className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <div className="text-2xl font-bold">9</div>
-              <p className="text-xs text-muted-foreground">Goals</p>
-            </CardContent>
-          </Card>
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
+            <MessageCircle className="w-8 h-8 mx-auto mb-2 text-purple-400" />
+            <div className="text-2xl font-bold text-white">{conversations.length}</div>
+            <p className="text-xs text-gray-400">Generated Replies</p>
+          </div>
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
+            <Target className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+            <div className="text-2xl font-bold text-white">∞</div>
+            <p className="text-xs text-gray-400">Remaining</p>
+          </div>
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
+            <TrendingUp className="w-8 h-8 mx-auto mb-2 text-purple-400" />
+            <div className="text-2xl font-bold text-white">8</div>
+            <p className="text-xs text-gray-400">Message Types</p>
+          </div>
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
+            <Zap className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+            <div className="text-2xl font-bold text-white">9</div>
+            <p className="text-xs text-gray-400">Goals</p>
+          </div>
         </div>
 
         {/* Generate New Reply Section */}
-        <Card className="mb-8 animate-scale-in">
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        <div className="bg-gray-900/50 border border-gray-800 rounded-xl mb-8 animate-scale-in">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <CardTitle className="text-2xl font-bold">Generate Perfect Reply</CardTitle>
-                <CardDescription>
+                <h2 className="text-2xl font-bold text-white">Generate Perfect Reply</h2>
+                <p className="text-gray-400">
                   Choose your strategy and create the perfect response
-                </CardDescription>
+                </p>
               </div>
               <Button
                 onClick={() => setShowNewReply(!showNewReply)}
-                className="transition-all hover:scale-105"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all hover:scale-105"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 New Reply
               </Button>
             </div>
-          </CardHeader>
-          
-          {showNewReply && (
-            <CardContent>
+            
+            {showNewReply && (
               <div className="space-y-6">
                 {/* Strategy Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-2 text-white">
                       Conversation Type
                     </label>
                     <Select value={conversationType} onValueChange={setConversationType}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                         <SelectValue placeholder="Choose your approach..." />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-gray-800 border-gray-700">
                         {CONVERSATION_TYPES.map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
+                          <SelectItem key={type.value} value={type.value} className="text-white hover:bg-gray-700">
                             {type.label}
                           </SelectItem>
                         ))}
@@ -378,16 +368,16 @@ const Dashboard = () => {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-2 text-white">
                       Goal
                     </label>
                     <Select value={goal} onValueChange={setGoal}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                         <SelectValue placeholder="What's your goal?" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-gray-800 border-gray-700">
                         {CONVERSATION_GOALS.map((goalOption) => (
-                          <SelectItem key={goalOption.value} value={goalOption.value}>
+                          <SelectItem key={goalOption.value} value={goalOption.value} className="text-white hover:bg-gray-700">
                             {goalOption.label}
                           </SelectItem>
                         ))}
@@ -398,14 +388,14 @@ const Dashboard = () => {
 
                 {/* Message Input */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="block text-sm font-medium mb-2 text-white">
                     Their Message
                   </label>
                   <Textarea
                     placeholder="Paste what they sent you..."
                     value={newDmText}
                     onChange={(e) => setNewDmText(e.target.value)}
-                    className="min-h-32 resize-none"
+                    className="min-h-32 resize-none bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
                     disabled={isGenerating}
                   />
                 </div>
@@ -414,11 +404,11 @@ const Dashboard = () => {
                   <Button
                     onClick={generateNewReply}
                     disabled={isGenerating || !newDmText.trim() || !conversationType || !goal}
-                    className="flex-1 font-semibold py-3 transition-all hover:scale-105"
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 transition-all hover:scale-105"
                   >
                     {isGenerating ? (
                       <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                         Generating Reply...
                       </>
                     ) : (
@@ -430,58 +420,58 @@ const Dashboard = () => {
                   <Button
                     onClick={() => setShowNewReply(false)}
                     variant="outline"
+                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
                   >
                     Cancel
                   </Button>
                 </div>
               </div>
-            </CardContent>
-          )}
-        </Card>
+            )}
+          </div>
+        </div>
 
         {/* Conversation History */}
-        <Card className="animate-scale-in">
-          <CardHeader>
-            <div className="flex items-center justify-between">
+        <div className="bg-gray-900/50 border border-gray-800 rounded-xl animate-scale-in">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <CardTitle className="text-xl font-bold">Your Replies</CardTitle>
-                <CardDescription>
+                <h2 className="text-xl font-bold text-white">Your Replies</h2>
+                <p className="text-gray-400">
                   Generated conversation history
-                </CardDescription>
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
                     placeholder="Search conversations..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 bg-background border rounded-lg text-sm focus:ring-2 focus:ring-primary/20"
+                    className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder:text-gray-400 text-sm focus:ring-2 focus:ring-purple-500/50"
                   />
                 </div>
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
+            
             {filteredConversations.length === 0 ? (
               <div className="text-center py-8">
-                <MessageCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground mb-2">No conversations yet</p>
-                <p className="text-muted-foreground text-sm">
+                <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-600" />
+                <p className="text-gray-400 mb-2">No conversations yet</p>
+                <p className="text-gray-500 text-sm">
                   Generate your first reply above
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
                 {filteredConversations.map((conv) => (
-                  <div key={conv.id} className="bg-card rounded-xl p-4 border transition-all hover:shadow-md">
+                  <div key={conv.id} className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 transition-all hover:bg-gray-800/70">
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex gap-2">
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full border border-primary/20">
+                        <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-1 rounded-full border border-purple-500/30">
                           {getTypeLabel(conv.conversation_type)}
                         </span>
-                        <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded-full">
+                        <span className="text-xs bg-pink-900/30 text-pink-300 px-2 py-1 rounded-full border border-pink-500/30">
                           {getGoalLabel(conv.goal)}
                         </span>
                       </div>
@@ -490,7 +480,7 @@ const Dashboard = () => {
                           onClick={() => copyToClipboard(conv.ai_reply, conv.id)}
                           variant="ghost"
                           size="sm"
-                          className="text-muted-foreground hover:text-primary transition-colors"
+                          className="text-gray-400 hover:text-purple-400 transition-colors"
                         >
                           {copiedId === conv.id ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                         </Button>
@@ -498,7 +488,7 @@ const Dashboard = () => {
                           onClick={() => deleteConversation(conv.id)}
                           variant="ghost"
                           size="sm"
-                          className="text-muted-foreground hover:text-destructive transition-colors"
+                          className="text-gray-400 hover:text-red-400 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -506,30 +496,30 @@ const Dashboard = () => {
                     </div>
                     
                     <div className="space-y-3">
-                      <div className="bg-muted/50 rounded-lg p-3 border-l-4 border-muted-foreground/30">
-                        <p className="text-sm font-medium mb-1">Their Message:</p>
-                        <p className="text-foreground">{conv.original_message}</p>
+                      <div className="bg-gray-700/50 rounded-lg p-3 border-l-4 border-gray-600">
+                        <p className="text-sm text-gray-300 font-medium mb-1">Their Message:</p>
+                        <p className="text-white">{conv.original_message}</p>
                       </div>
                       
-                      <div className="bg-primary/5 rounded-lg p-3 border-l-4 border-primary">
-                        <p className="text-sm text-primary font-medium mb-1">Your Perfect Reply:</p>
-                        <p className="text-foreground">{conv.ai_reply}</p>
+                      <div className="bg-purple-900/20 rounded-lg p-3 border-l-4 border-purple-500">
+                        <p className="text-sm text-purple-300 font-medium mb-1">Your Perfect Reply:</p>
+                        <p className="text-white">{conv.ai_reply}</p>
                       </div>
                     </div>
                     
-                    <div className="mt-3 text-xs text-muted-foreground">
+                    <div className="mt-3 text-xs text-gray-500">
                       {new Date(conv.created_at).toLocaleDateString()} at {new Date(conv.created_at).toLocaleTimeString()}
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Help Section */}
-        <div className="text-center mt-8 pt-8 border-t">
-          <p className="text-muted-foreground text-sm">
+        <div className="text-center mt-8 pt-8 border-t border-gray-800">
+          <p className="text-gray-400 text-sm">
             Need help? Contact support@instadm.pro
           </p>
         </div>
