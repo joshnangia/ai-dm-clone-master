@@ -273,9 +273,9 @@ const Try = () => {
                   </div>
                   <Button
                     onClick={copyReply}
-                    variant="outline"
+                    variant="secondary"
                     size="sm"
-                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                    className="bg-muted/20 border-muted-foreground/20 text-muted-foreground hover:bg-muted/40 hover:text-foreground"
                   >
                     <Copy className="w-4 h-4 mr-2" />
                     Copy
