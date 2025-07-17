@@ -18,9 +18,12 @@ export const useAuth = () => {
           console.log('Initial session:', session?.user?.email || 'no user');
           setSession(session);
           setUser(session?.user ?? null);
+          
           if (session) {
             // Check subscription status when we have a session
-            setTimeout(() => checkSubscription(session), 100);
+            checkSubscription(session);
+          } else {
+            setSubscribed(false);
           }
           setLoading(false);
         }
@@ -33,14 +36,17 @@ export const useAuth = () => {
     };
 
     // Set up auth listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (mounted) {
         console.log('Auth change:', event, session?.user?.email || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
-        if (session && event === 'SIGNED_IN') {
-          // Check subscription when user signs in
-          setTimeout(() => checkSubscription(session), 100);
+        
+        if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+          // Check subscription when user signs in or token refreshes
+          await checkSubscription(session);
+        } else if (event === 'SIGNED_OUT') {
+          setSubscribed(false);
         }
         setLoading(false);
       }

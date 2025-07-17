@@ -60,8 +60,8 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      success_url: `${req.headers.get("origin") || "https://instareply.co"}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin") || "https://instareply.co"}/dashboard`,
+      success_url: `${req.headers.get("origin") || "https://preview--personachain.lovable.app"}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.get("origin") || "https://preview--personachain.lovable.app"}/dashboard`,
       metadata: {
         user_email: email,
       },

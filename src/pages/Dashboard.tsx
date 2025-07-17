@@ -45,7 +45,7 @@ const SALES_GOALS = [
 
 
 const Dashboard = () => {
-  const { user, session, subscribed, signOut } = useAuth();
+  const { user, session, loading, subscribed, signOut } = useAuth();
   const { toast } = useToast();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [newDmText, setNewDmText] = useState('');
@@ -56,6 +56,24 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewReply, setShowNewReply] = useState(false);
   const [generatedReply, setGeneratedReply] = useState<string>('');
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to auth if no user
+  if (!user) {
+    window.location.href = '/auth';
+    return null;
+  }
 
   useEffect(() => {
     if (subscribed && user) {
@@ -357,25 +375,25 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="bg-black/95 backdrop-blur-sm border-b border-gray-900 sticky top-0 z-20">
-        <div className="px-4 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white">
+      {/* Enhanced Header */}
+      <div className="bg-black/80 backdrop-blur-lg border-b border-purple-500/20 sticky top-0 z-20">
+        <div className="px-6 py-4">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-              Home
+            <Link to="/" className="flex items-center gap-3 text-gray-400 hover:text-purple-400 transition-all duration-300 group">
+              <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+              <span className="font-medium">Home</span>
             </Link>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 px-3 py-1 rounded-full">
-                <Crown className="w-3 h-3 text-white" />
-                <span className="text-xs font-semibold text-white">Pro</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm border border-purple-500/30 px-4 py-2 rounded-full">
+                <Crown className="w-4 h-4 text-purple-400" />
+                <span className="text-sm font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Pro Member</span>
               </div>
               <Button
                 onClick={signOut}
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-300"
               >
                 Sign Out
               </Button>
@@ -384,139 +402,154 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="px-4 py-6 max-w-6xl mx-auto">
-        {/* Hero Section */}
-        <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Sales Machine Pro Dashboard
+      <div className="px-6 py-8 max-w-7xl mx-auto">
+        {/* Enhanced Hero Section */}
+        <div className="text-center mb-12 animate-fade-in">
+          <div className="inline-flex items-center gap-2 bg-purple-600/10 border border-purple-500/30 rounded-full px-4 py-2 mb-6">
+            <Zap className="w-4 h-4 text-purple-400" />
+            <span className="text-sm text-purple-300">Sales Machine Pro Dashboard</span>
+          </div>
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+            Turn DMs Into Revenue
           </h1>
-          <p className="text-xl text-gray-300">
-            Turn every DM into cash with AI-powered sales replies
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Generate high-converting sales replies powered by advanced AI psychology frameworks
           </p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 animate-fade-in">
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
-            <MessageCircle className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-            <div className="text-2xl font-bold text-white">{conversations.length}</div>
-            <p className="text-xs text-gray-400">Sales Replies</p>
+        {/* Enhanced Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-fade-in">
+          <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-3xl font-bold text-white mb-1">{conversations.length}</div>
+            <p className="text-sm text-purple-300">Sales Replies Generated</p>
           </div>
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
-            <Target className="w-8 h-8 mx-auto mb-2 text-pink-400" />
-            <div className="text-2xl font-bold text-white">∞</div>
-            <p className="text-xs text-gray-400">Remaining</p>
+          
+          <div className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border border-pink-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20">
+            <div className="w-12 h-12 bg-gradient-to-r from-pink-600 to-pink-700 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <Target className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-3xl font-bold text-white mb-1">∞</div>
+            <p className="text-sm text-pink-300">Unlimited Access</p>
           </div>
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
-            <TrendingUp className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-            <div className="text-2xl font-bold text-white">9</div>
-            <p className="text-xs text-gray-400">Sales Goals</p>
+          
+          <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-3xl font-bold text-white mb-1">9</div>
+            <p className="text-sm text-purple-300">Psychology Frameworks</p>
           </div>
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
-            <Zap className="w-8 h-8 mx-auto mb-2 text-pink-400" />
-            <div className="text-2xl font-bold text-white">∞</div>
-            <p className="text-xs text-gray-400">Revenue Potential</p>
+          
+          <div className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border border-pink-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20">
+            <div className="w-12 h-12 bg-gradient-to-r from-pink-600 to-pink-700 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <DollarSign className="w-6 h-6 text-white" />
+            </div>
+            <div className="text-3xl font-bold text-white mb-1">97%</div>
+            <p className="text-sm text-pink-300">Success Rate</p>
           </div>
         </div>
 
-        {/* Generate New Reply Section */}
-        <div className="bg-gray-900/50 border border-gray-800 rounded-xl mb-8 animate-scale-in">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white">Generate Money-Making Reply</h2>
-                <p className="text-gray-400">
-                  Tell us who you are and what you want to sell
-                </p>
+        {/* Enhanced Generate Section */}
+        <div className="bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-700/50 backdrop-blur-sm rounded-3xl mb-12 animate-scale-in overflow-hidden">
+          <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 p-1">
+            <div className="bg-gray-900/80 rounded-3xl p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-3xl font-bold text-white mb-2">🎯 AI Sales Reply Generator</h2>
+                  <p className="text-gray-400 text-lg">
+                    Transform any DM into a money-making opportunity
+                  </p>
+                </div>
+                <Button
+                  onClick={() => setShowNewReply(!showNewReply)}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-purple-500/30"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Generate New Reply
+                </Button>
               </div>
-              <Button
-                onClick={() => setShowNewReply(!showNewReply)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all hover:scale-105"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                New Reply
-              </Button>
-            </div>
-            
-            {showNewReply && (
-              <div className="space-y-6">
-                {/* User Info & Sales Goal */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              {showNewReply && (
+                <div className="space-y-8 animate-fade-in">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold mb-3 text-white">
+                        Your Business/Handle
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. @fitnessguru, Course Creator, SaaS Founder"
+                        value={userHandle}
+                        onChange={(e) => setUserHandle(e.target.value)}
+                        className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 text-white placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
+                        disabled={isGenerating}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-semibold mb-3 text-white">
+                        Sales Objective
+                      </label>
+                      <Select value={goal} onValueChange={setGoal}>
+                        <SelectTrigger className="bg-gray-800/50 border-gray-600/50 text-white h-14 rounded-xl">
+                          <SelectValue placeholder="What's your sales goal?" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-800 border-gray-700">
+                          {SALES_GOALS.map((goalOption) => (
+                            <SelectItem key={goalOption.value} value={goalOption.value} className="text-white hover:bg-gray-700">
+                              {goalOption.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-white">
-                      Your Handle/Business
+                    <label className="block text-sm font-semibold mb-3 text-white">
+                      Their Message
                     </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. @fitnessguru, Course Creator, Product Owner"
-                      value={userHandle}
-                      onChange={(e) => setUserHandle(e.target.value)}
-                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-purple-500/50"
+                    <Textarea
+                      placeholder="Paste their DM here and watch the AI work its magic..."
+                      value={newDmText}
+                      onChange={(e) => setNewDmText(e.target.value)}
+                      className="min-h-40 resize-none bg-gray-800/50 border-gray-600/50 text-white placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
                       disabled={isGenerating}
                     />
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-white">
-                      Sales Goal
-                    </label>
-                    <Select value={goal} onValueChange={setGoal}>
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                        <SelectValue placeholder="What do you want to sell?" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-700">
-                        {SALES_GOALS.map((goalOption) => (
-                          <SelectItem key={goalOption.value} value={goalOption.value} className="text-white hover:bg-gray-700">
-                            {goalOption.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={generateNewReply}
+                      disabled={isGenerating || !newDmText.trim() || !userHandle || !goal}
+                      className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 text-lg rounded-xl transition-all duration-300 hover:scale-105 shadow-lg"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                          Generating Money-Making Reply...
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="w-5 h-5 mr-2" />
+                          Generate High-Converting Reply
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => setShowNewReply(false)}
+                      variant="ghost"
+                      className="px-6 py-4 text-gray-400 hover:text-gray-300 hover:bg-gray-800/50 rounded-xl transition-all duration-300"
+                    >
+                      Cancel
+                    </Button>
                   </div>
                 </div>
-
-                {/* Message Input */}
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-white">
-                    Their Message
-                  </label>
-                  <Textarea
-                    placeholder="Paste what they sent you..."
-                    value={newDmText}
-                    onChange={(e) => setNewDmText(e.target.value)}
-                    className="min-h-32 resize-none bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
-                    disabled={isGenerating}
-                  />
-                </div>
-
-                <div className="flex gap-3">
-                  <Button
-                    onClick={generateNewReply}
-                    disabled={isGenerating || !newDmText.trim() || !userHandle || !goal}
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 transition-all hover:scale-105"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Generating Sales Reply...
-                      </>
-                    ) : (
-                      <>
-                        Generate Money-Making Reply
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    onClick={() => setShowNewReply(false)}
-                    variant="ghost"
-                    size="sm"
-                    className="px-4 py-2 text-gray-400 hover:text-gray-300 transition-colors"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
