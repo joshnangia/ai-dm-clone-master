@@ -3,26 +3,95 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>InstaReply - AI Instagram DM Tool</title>
+    <title>InstaReply - AI-Powered Sales Replies</title>
     <link rel="icon" href="/lovable-uploads/ee7618ff-ba93-4028-a634-e756d48f729c.png" type="image/png">
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <meta name="description" content="Turn every DM into cash with AI-powered sales replies" />
+    <meta name="author" content="InstaReply" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <meta property="og:title" content="ai-dm-clone-master" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="InstaReply - AI Sales Reply Generator" />
+    <meta property="og:description" content="Turn every DM into cash with AI-powered sales replies" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <style>
+      /* Hide Lovable badges and edit buttons */
+      [data-lovable],
+      [class*="lovable"],
+      [id*="lovable"],
+      .lovable-badge,
+      .lovable-hidden,
+      [aria-label*="lovable" i],
+      [title*="lovable" i],
+      [href*="lovable" i] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        position: absolute !important;
+        left: -9999px !important;
+      }
+    </style>
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <script>
+      // Enhanced Lovable badge removal
+      const removeLovableBadges = () => {
+        const selectors = [
+          '[data-lovable]',
+          '[class*="lovable"]',
+          '[id*="lovable"]',
+          '.lovable-badge',
+          '.lovable-hidden',
+          '[aria-label*="lovable" i]',
+          '[title*="lovable" i]',
+          '[href*="lovable" i]',
+          'a[href*="lovable.dev"]',
+          'a[href*="edit"]',
+          '[title*="edit" i]'
+        ];
+        
+        selectors.forEach(selector => {
+          try {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+              el.style.display = 'none';
+              el.style.visibility = 'hidden';
+              el.style.opacity = '0';
+              el.style.pointerEvents = 'none';
+              el.style.position = 'absolute';
+              el.style.left = '-9999px';
+              el.remove();
+            });
+          } catch (e) {
+            // Ignore errors
+          }
+        });
+      };
+      
+      // Run immediately and continuously
+      removeLovableBadges();
+      document.addEventListener('DOMContentLoaded', removeLovableBadges);
+      setInterval(removeLovableBadges, 500);
+      
+      // Watch for new elements
+      const observer = new MutationObserver(() => {
+        removeLovableBadges();
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'id', 'data-lovable']
+      });
+    </script>
   </body>
 </html>

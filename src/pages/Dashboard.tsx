@@ -154,8 +154,29 @@ const Dashboard = () => {
     }
   };
 
-  const handleUpgrade = () => {
-    window.open('https://buy.stripe.com/test_6oU9AU6QO0sY9Qn6HKdAk07', '_blank');
+  const handleUpgrade = async () => {
+    if (!user?.email) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { email: user.email },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start checkout. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const filteredConversations = conversations.filter(
@@ -172,76 +193,104 @@ const Dashboard = () => {
 
   if (!subscribed) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <div className="px-4 py-6">
-          <div className="flex justify-between items-center mb-6">
-            <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Link>
-            <Button
-              onClick={signOut}
-              variant="ghost"
-              size="sm"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Sign Out
-            </Button>
-          </div>
-
-          <div className="max-w-md mx-auto text-center">
-            <div className="mb-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg animate-fade-in">
-                <MessageCircle className="w-10 h-10 text-white" />
-              </div>
+      <div className="min-h-screen bg-black text-white relative overflow-hidden">
+        {/* Blurred Background Content */}
+        <div className="blur-sm pointer-events-none opacity-50">
+          <div className="px-4 py-6 max-w-6xl mx-auto">
+            <div className="text-center mb-8">
               <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Unlock Sales Machine Pro
+                Sales Machine Pro Dashboard
               </h1>
-              <p className="text-gray-300 text-lg">
+              <p className="text-xl text-gray-300">
                 Turn every DM into cash with AI-powered sales replies
               </p>
             </div>
-
-            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 mb-6 text-left">
-              <h3 className="font-semibold mb-4 text-center text-white">Turn DMs into dollars:</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">AI analyzes your business & creates perfect sales replies</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">9 proven sales goals (sell courses, products, book calls)</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">Unlimited money-making responses</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">Sales analytics & conversion tracking</span>
-                </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+                <MessageCircle className="w-8 h-8 mx-auto mb-2 text-purple-400" />
+                <div className="text-2xl font-bold text-white">0</div>
+                <p className="text-xs text-gray-400">Sales Replies</p>
+              </div>
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+                <Target className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+                <div className="text-2xl font-bold text-white">∞</div>
+                <p className="text-xs text-gray-400">Remaining</p>
+              </div>
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-purple-400" />
+                <div className="text-2xl font-bold text-white">9</div>
+                <p className="text-xs text-gray-400">Sales Goals</p>
+              </div>
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
+                <Zap className="w-8 h-8 mx-auto mb-2 text-pink-400" />
+                <div className="text-2xl font-bold text-white">∞</div>
+                <p className="text-xs text-gray-400">Revenue Potential</p>
               </div>
             </div>
+            
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+              <h2 className="text-2xl font-bold text-white mb-4">Generate Money-Making Reply</h2>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gray-800 rounded-lg p-3 h-12"></div>
+                  <div className="bg-gray-800 rounded-lg p-3 h-12"></div>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-3 h-32"></div>
+                <div className="bg-purple-600 rounded-lg p-3 h-12"></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <Button
-              onClick={handleUpgrade}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-lg font-semibold rounded-xl mb-4 transition-all hover:scale-105"
-            >
-              Get Sales Machine Pro - $9.99/mo
-            </Button>
+        {/* Overlay Content */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="bg-black/90 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 max-w-md mx-4">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Crown className="w-10 h-10 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Unlock Sales Machine Pro
+              </h1>
+              <p className="text-gray-300 text-lg mb-6">
+                Turn every DM into cash with AI-powered sales replies
+              </p>
 
-            <p className="text-xs text-gray-400">
-              Start making money from DMs today • Cancel anytime
-            </p>
+              <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 mb-6 text-left">
+                <h3 className="font-semibold mb-3 text-center text-white">Premium Features:</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm text-gray-300">Unlimited AI sales replies</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm text-gray-300">9 proven sales goals</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm text-gray-300">Psychology-based responses</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm text-gray-300">Analytics & tracking</span>
+                  </div>
+                </div>
+              </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-800">
-              <p className="text-sm text-gray-400 mb-3">Want to try first?</p>
-              <Link to="/try">
-                <Button variant="outline" className="w-full border-purple-600/50 text-purple-400 hover:bg-purple-900/20">
-                  Try 1 Free Reply
-                </Button>
-              </Link>
+              <Button
+                onClick={handleUpgrade}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 text-lg font-semibold rounded-xl mb-4 transition-all hover:scale-105"
+              >
+                Get Sales Machine Pro - $9.99/mo
+              </Button>
+
+              <div className="flex justify-between items-center text-xs text-gray-400">
+                <Link to="/" className="hover:text-white transition-colors">← Back</Link>
+                <span>Cancel anytime</span>
+                <button onClick={signOut} className="hover:text-white transition-colors">Sign Out</button>
+              </div>
             </div>
           </div>
         </div>
