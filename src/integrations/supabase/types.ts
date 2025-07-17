@@ -17,7 +17,9 @@ export type Database = {
       conversations: {
         Row: {
           ai_reply: string
+          conversation_type: string | null
           created_at: string
+          goal: string | null
           id: string
           original_message: string
           updated_at: string
@@ -25,7 +27,9 @@ export type Database = {
         }
         Insert: {
           ai_reply: string
+          conversation_type?: string | null
           created_at?: string
+          goal?: string | null
           id?: string
           original_message: string
           updated_at?: string
@@ -33,7 +37,9 @@ export type Database = {
         }
         Update: {
           ai_reply?: string
+          conversation_type?: string | null
           created_at?: string
+          goal?: string | null
           id?: string
           original_message?: string
           updated_at?: string

@@ -26,8 +26,8 @@ interface Conversation {
   id: string;
   original_message: string;
   ai_reply: string;
-  conversation_type: string;
-  goal: string;
+  conversation_type?: string;
+  goal?: string;
   created_at: string;
 }
 
@@ -172,12 +172,14 @@ const Dashboard = () => {
       conv.ai_reply.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getTypeLabel = (type: string) => {
+  const getTypeLabel = (type?: string) => {
+    if (!type) return 'N/A';
     const found = CONVERSATION_TYPES.find(t => t.value === type);
     return found ? found.label : type;
   };
 
-  const getGoalLabel = (goal: string) => {
+  const getGoalLabel = (goal?: string) => {
+    if (!goal) return 'N/A';
     const found = CONVERSATION_GOALS.find(g => g.value === goal);
     return found ? found.label : goal;
   };
