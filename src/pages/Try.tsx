@@ -194,19 +194,6 @@ const Try = () => {
                   Upgrade to Pro
                 </Button>
               </Link>
-              <Button
-                onClick={() => {
-                  setHasUsedFreeReply(false);
-                  setGeneratedReply('');
-                  setDmText('');
-                  setUserHandle('');
-                  setGoal('');
-                }}
-                variant="outline"
-                className="border-gray-700 text-gray-300 hover:bg-gray-800"
-              >
-                Try Again
-              </Button>
             </div>
           </div>
         )}

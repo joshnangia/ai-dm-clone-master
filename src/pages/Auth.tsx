@@ -57,6 +57,12 @@ const Auth = () => {
               description: "Invalid email or password. Please check your credentials.",
               variant: "destructive",
             });
+          } else if (error.message.includes('Email not confirmed')) {
+            toast({
+              title: "Email not verified",
+              description: "Please check your email and click the verification link we sent you, then try signing in again.",
+              variant: "destructive",
+            });
           } else {
             toast({
               title: "Login failed",
@@ -95,10 +101,17 @@ const Auth = () => {
             });
           }
         } else {
-          toast({
-            title: "Account created!",
-            description: "You can now sign in with your credentials.",
-          });
+          if (data.user && !data.session) {
+            toast({
+              title: "Check your email!",
+              description: "We sent you a verification link. Click it to activate your account, then come back to sign in.",
+            });
+          } else {
+            toast({
+              title: "Account created!",
+              description: "You can now sign in with your credentials.",
+            });
+          }
           setIsLogin(true);
         }
       }
@@ -163,6 +176,15 @@ const Auth = () => {
             {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Create Account')}
           </Button>
         </form>
+
+        {!isLogin && (
+          <div className="mt-4 p-4 bg-purple-900/20 border border-purple-500/30 rounded-lg">
+            <p className="text-sm text-purple-200">
+              📧 <strong>Important:</strong> After signing up, check your email for a verification link. 
+              You must verify your email before you can sign in and access your dashboard.
+            </p>
+          </div>
+        )}
 
         <div className="mt-6 text-center">
           <button
