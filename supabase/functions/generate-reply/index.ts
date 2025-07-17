@@ -34,48 +34,50 @@ serve(async (req) => {
       });
     }
 
-    // Get user from auth header
+    // Check if this is a free try (no auth) or authenticated user
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'No authorization header' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Create Supabase client with service role key
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const isFreeMode = !authHeader || authHeader.includes('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdHdhd3pra2tycmVveWdraGppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MzMzNTQsImV4cCI6MjA2NTEwOTM1NH0._RHtQYQDbOOv-GK-PwqTTvlUZR1XJbK1at186VVLzLQ');
     
-    // Get user from token
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    let user = null;
     
-    if (userError || !user) {
-      console.error('User error:', userError);
-      return new Response(JSON.stringify({ error: 'Invalid user' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    if (!isFreeMode) {
+      // Create Supabase client with service role key
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      
+      // Get user from token
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user: authUser }, error: userError } = await supabase.auth.getUser(token);
+      
+      if (userError || !authUser) {
+        console.error('User error:', userError);
+        return new Response(JSON.stringify({ error: 'Invalid user' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      console.log('User authenticated:', authUser.email);
+
+      // Check if user has active subscription
+      const { data: subscription, error: subError } = await supabase
+        .from('subscribers')
+        .select('subscribed, subscription_end')
+        .eq('user_id', authUser.id)
+        .single();
+
+      if (subError || !subscription?.subscribed) {
+        console.log('User not subscribed or error:', subError);
+        return new Response(JSON.stringify({ error: 'Subscription required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      console.log('User has valid subscription');
+      user = authUser;
+    } else {
+      console.log('Free mode request - no authentication required');
     }
-
-    console.log('User authenticated:', user.email);
-
-    // Check if user has active subscription
-    const { data: subscription, error: subError } = await supabase
-      .from('subscribers')
-      .select('subscribed, subscription_end')
-      .eq('user_id', user.id)
-      .single();
-
-    if (subError || !subscription?.subscribed) {
-      console.log('User not subscribed or error:', subError);
-      return new Response(JSON.stringify({ error: 'Subscription required' }), {
-        status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    console.log('User has valid subscription');
 
     // MASSIVELY IMPROVED AI SYSTEM
     let systemPrompt = `You are an ELITE communication AI that understands human psychology and context at the deepest level.
@@ -199,16 +201,18 @@ Generate a response that feels completely natural and human while being strategi
     const data = await response.json();
     const generatedReply = data.choices[0].message.content;
 
-    // Save conversation to database
-    await supabase
-      .from('conversations')
-      .insert({
-        user_id: user.id,
-        original_message: dmText,
-        ai_reply: generatedReply,
-        user_handle: userHandle || null,
-        goal: goal || null
-      });
+    // Save conversation to database only if user is authenticated
+    if (user) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      await supabase
+        .from('conversations')
+        .insert({
+          user_id: user.id,
+          original_message: dmText,
+          ai_reply: generatedReply,
+          goal: goal || null
+        });
+    }
 
     console.log('Generated reply successfully and saved to database');
 

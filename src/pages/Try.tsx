@@ -5,8 +5,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Link } from 'react-router-dom';
-import { Copy, Zap, Brain, Target, Sparkles } from 'lucide-react';
+import { Copy, Zap, Brain, Target, Sparkles, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Try = () => {
@@ -15,7 +16,8 @@ const Try = () => {
   const [goal, setGoal] = useState('');
   const [reply, setReply] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+  const [analysisStep, setAnalysisStep] = useState(0);
   const [analysis, setAnalysis] = useState({
     messageType: '',
     tone: '',
@@ -25,57 +27,80 @@ const Try = () => {
   const [hasTriedFree, setHasTriedFree] = useState(false);
   const { toast } = useToast();
 
-  const simulateAnalysis = () => {
-    setShowAnalysis(true);
-    
-    // Determine message type and context - PRIORITIZE BUSINESS INTENT
-    const lowerText = dmText.toLowerCase();
-    let messageType = '';
-    let tone = '';
-    let context = '';
-    let strategy = '';
+  const analysisSteps = [
+    { label: "Analyzing message intent...", icon: Brain },
+    { label: "Detecting emotional tone...", icon: Target },
+    { label: "Crafting strategic response...", icon: Sparkles },
+    { label: "Generating AI reply...", icon: CheckCircle }
+  ];
 
-    // BUSINESS INTENT DETECTION (highest priority)
-    // Sales comparison and competitive advantage questions
+  const simulateAnalysisSteps = async () => {
+    const lowerText = dmText.toLowerCase();
+    
+    // Step 1: Message Intent
+    setAnalysisStep(0);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    let messageType = '';
     if (lowerText.includes('why you over competitors') || lowerText.includes('what makes you different') || lowerText.includes('how are you better than others') || lowerText.includes('why choose your company') || lowerText.includes('compare your offer to others') || lowerText.includes('why your business') || lowerText.includes('why should i go with you') || lowerText.includes('what makes you stand out')) {
       messageType = 'Sales Comparison / Competitive Advantage';
-      tone = 'Evaluating & Comparing';
-      context = 'Seeking competitive differentiators and unique value';
-      strategy = 'Highlight unique advantages, proof points, and competitive edge';
     } else if (lowerText.includes('reason') || lowerText.includes('why should') || lowerText.includes('convince me') || lowerText.includes('what makes') || lowerText.includes('tell me about') || lowerText.includes('give me')) {
       messageType = 'Sales Interest / Objection Response';
-      tone = 'Curious & Evaluating';
-      context = 'Asking for value proposition or reasons to buy';
-      strategy = 'Provide specific, credible value points with social proof';
     } else if (lowerText.includes('price') || lowerText.includes('cost') || lowerText.includes('expensive') || lowerText.includes('buy') || lowerText.includes('purchase')) {
       messageType = 'Sales/Business';
-      tone = 'Professional & Persuasive';
-      context = 'Price or purchase inquiry';
-      strategy = 'Address concerns, show value, create urgency';
     } else if (lowerText.includes('interested') || lowerText.includes('tell me more') || lowerText.includes('course') || lowerText.includes('service')) {
       messageType = 'Business Interest';
-      tone = 'Engaged & Curious';
-      context = 'Showing interest in offer';
-      strategy = 'Provide value, build excitement, guide to next step';
     } else if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('what\'s up') || lowerText.includes('how are you')) {
-      // Only treat as casual if NO business intent detected
       messageType = 'Casual/Social';
+    } else {
+      messageType = 'General Business Inquiry';
+    }
+    
+    // Step 2: Emotional Tone
+    setAnalysisStep(1);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    let tone = '';
+    if (messageType.includes('Sales Comparison')) {
+      tone = 'Evaluating & Comparing';
+    } else if (messageType.includes('Sales Interest')) {
+      tone = 'Curious & Evaluating';
+    } else if (messageType.includes('Business')) {
+      tone = 'Professional & Engaged';
+    } else if (messageType.includes('Casual')) {
       tone = 'Friendly & Relaxed';
+    } else {
+      tone = 'Professional & Helpful';
+    }
+    
+    // Step 3: Strategy
+    setAnalysisStep(2);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    let context = '';
+    let strategy = '';
+    if (messageType.includes('Comparison')) {
+      context = 'Seeking competitive differentiators and unique value';
+      strategy = 'Highlight unique advantages, proof points, and competitive edge';
+    } else if (messageType.includes('Sales Interest')) {
+      context = 'Asking for value proposition or reasons to buy';
+      strategy = 'Provide specific, credible value points with social proof';
+    } else if (messageType.includes('Business')) {
+      context = 'Showing interest in offer or service';
+      strategy = 'Provide value, build excitement, guide to next step';
+    } else if (messageType.includes('Casual')) {
       context = 'Opening conversation or greeting';
       strategy = 'Match their energy, build rapport naturally';
     } else {
-      messageType = 'General Business Inquiry';
-      tone = 'Professional & Helpful';
       context = 'Information seeking with business intent';
       strategy = 'Provide helpful response, show expertise, build connection';
     }
-
-    setAnalysis({
-      messageType,
-      tone,
-      context,
-      strategy
-    });
+    
+    setAnalysis({ messageType, tone, context, strategy });
+    
+    // Step 4: Generate Reply
+    setAnalysisStep(3);
+    await new Promise(resolve => setTimeout(resolve, 600));
   };
 
   const handleGenerate = async () => {
@@ -89,18 +114,19 @@ const Try = () => {
     }
 
     setLoading(true);
-    simulateAnalysis();
+    setShowAnalysisModal(true);
+    setAnalysisStep(0);
 
     try {
-      // Show analysis steps for 2 seconds
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Run analysis animation
+      await simulateAnalysisSteps();
 
       // Call the actual AI edge function
       const response = await fetch('https://ostwawzkkkrreoygkhji.supabase.co/functions/v1/generate-reply', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdHdhd3pra2tycmVveWdraGppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MzMzNTQsImV4cCI6MjA2NTEwOTM1NH0._RHtQYQDbOOv-GK-PwqTTvlUZR1XJbK1at186VVLzLQ'}`,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdHdhd3pra2tycmVveWdraGppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MzMzNTQsImV4cCI6MjA2NTEwOTM1NH0._RHtQYQDbOOv-GK-PwqTTvlUZR1XJbK1at186VVLzLQ`,
         },
         body: JSON.stringify({
           dmText: dmText,
@@ -122,12 +148,18 @@ const Try = () => {
       setReply(data.reply);
       setHasTriedFree(true);
       
-      toast({
-        title: "Reply generated!",
-        description: "Your AI-powered response is ready to copy.",
-      });
+      // Close modal and show success
+      setTimeout(() => {
+        setShowAnalysisModal(false);
+        toast({
+          title: "Reply generated!",
+          description: "Your AI-powered response is ready to copy.",
+        });
+      }, 1000);
+      
     } catch (error) {
       console.error('Error calling AI:', error);
+      setShowAnalysisModal(false);
       toast({
         title: "AI generation failed",
         description: "Please try again in a moment.",
@@ -251,42 +283,62 @@ const Try = () => {
             </div>
           </Card>
 
-          {/* Analysis & Output Section */}
-          <div className="space-y-6">
-            {/* AI Analysis */}
-            {showAnalysis && (
-              <Card className="p-6 bg-gray-900 border-gray-800">
-                <div className="flex items-center space-x-2 mb-4">
-                  <Brain className="w-5 h-5 text-purple-400" />
-                  <h3 className="font-bold text-lg">AI Analysis</h3>
-                </div>
+          {/* Analysis Modal */}
+          <Dialog open={showAnalysisModal} onOpenChange={setShowAnalysisModal}>
+            <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-center text-xl font-bold">AI Analysis in Progress</DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6 py-6">
+                {analysisSteps.map((step, index) => {
+                  const Icon = step.icon;
+                  const isActive = index === analysisStep;
+                  const isCompleted = index < analysisStep;
+                  
+                  return (
+                    <div key={index} className={`flex items-center space-x-3 transition-all duration-300 ${
+                      isActive ? 'text-purple-400' : isCompleted ? 'text-green-400' : 'text-gray-500'
+                    }`}>
+                      {isActive ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : isCompleted ? (
+                        <CheckCircle className="w-5 h-5" />
+                      ) : (
+                        <Icon className="w-5 h-5" />
+                      )}
+                      <span className={`${isActive ? 'font-medium' : ''}`}>
+                        {step.label}
+                      </span>
+                    </div>
+                  );
+                })}
                 
-                <div className="space-y-4 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Message Type:</span>
-                    <span className="font-medium text-purple-400">{analysis.messageType}</span>
+                {analysisStep === 3 && (
+                  <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
+                    <div className="text-sm space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Message Type:</span>
+                        <span className="text-purple-400 font-medium">{analysis.messageType}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Detected Tone:</span>
+                        <span className="text-blue-400 font-medium">{analysis.tone}</span>
+                      </div>
+                      <div className="mt-3">
+                        <span className="text-gray-400">Strategy:</span>
+                        <p className="text-pink-400 text-sm mt-1">{analysis.strategy}</p>
+                      </div>
+                    </div>
                   </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Detected Tone:</span>
-                    <span className="font-medium text-blue-400">{analysis.tone}</span>
-                  </div>
-                  
-                  <div>
-                    <span className="text-gray-400">Context:</span>
-                    <p className="text-white mt-1">{analysis.context}</p>
-                  </div>
-                  
-                  <div>
-                    <span className="text-gray-400">Strategy:</span>
-                    <p className="text-pink-400 mt-1">{analysis.strategy}</p>
-                  </div>
-                </div>
-              </Card>
-            )}
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
 
-            {/* Generated Reply */}
-            {reply && (
+          {/* Analysis & Output Section - Only show after modal closes */}
+          <div className="space-y-6">
+            {reply && !showAnalysisModal && (
               <Card className="p-6 bg-gray-900 border-gray-800">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-2">
