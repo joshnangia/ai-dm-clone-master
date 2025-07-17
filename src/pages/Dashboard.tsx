@@ -57,6 +57,19 @@ const Dashboard = () => {
   const [showNewReply, setShowNewReply] = useState(false);
   const [generatedReply, setGeneratedReply] = useState<string>('');
 
+  useEffect(() => {
+    if (subscribed && user) {
+      loadConversations();
+    }
+  }, [subscribed, user]);
+
+  useEffect(() => {
+    // Redirect to auth if no user after loading is complete
+    if (!loading && !user) {
+      window.location.href = '/auth';
+    }
+  }, [loading, user]);
+
   // Show loading state
   if (loading) {
     return (
@@ -69,17 +82,17 @@ const Dashboard = () => {
     );
   }
 
-  // Redirect to auth if no user
+  // Show loading while redirecting
   if (!user) {
-    window.location.href = '/auth';
-    return null;
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Redirecting to login...</p>
+        </div>
+      </div>
+    );
   }
-
-  useEffect(() => {
-    if (subscribed && user) {
-      loadConversations();
-    }
-  }, [subscribed, user]);
 
   const loadConversations = async () => {
     try {
