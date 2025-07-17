@@ -92,36 +92,34 @@ const Try = () => {
     simulateAnalysis();
 
     try {
-      // Simulate the analysis steps with realistic timing
+      // Show analysis steps for 2 seconds
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // AI response based on BUSINESS INTENT FIRST
-      const lowerText = dmText.toLowerCase();
-      let mockReply = '';
+      // Call the actual AI edge function
+      const response = await fetch('https://ostwawzkkkrreoygkhji.supabase.co/functions/v1/generate-reply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zdHdhd3pra2tycmVveWdraGppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MzMzNTQsImV4cCI6MjA2NTEwOTM1NH0._RHtQYQDbOOv-GK-PwqTTvlUZR1XJbK1at186VVLzLQ'}`,
+        },
+        body: JSON.stringify({
+          dmText: dmText,
+          userHandle: userHandle || '@instareply',
+          goal: goal || 'Sell AI DM automation course'
+        }),
+      });
 
-      // PRIORITIZE BUSINESS QUESTIONS - Check for competitive questions first
-      if (lowerText.includes('why you over competitors') || lowerText.includes('what makes you different') || lowerText.includes('how are you better than others') || lowerText.includes('why choose your company') || lowerText.includes('compare your offer to others') || lowerText.includes('why your business') || lowerText.includes('why should i go with you') || lowerText.includes('what makes you stand out')) {
-        mockReply = "Great question — here's what makes us stand out:\n\n• Higher conversion rates — turns DMs into actual sales, not just responses\n• Niche-specific training — built for your exact audience and industry\n• Proven results — used by top creators generating 6-7 figures from DMs\n• Lightning fast setup — get it running in under 10 minutes\n• Ongoing optimization — constantly improves based on your performance\n\nWant to see it in action for your goal?";
-      } else if (lowerText.includes('reason') || lowerText.includes('why should') || lowerText.includes('convince me') || lowerText.includes('what makes') || (lowerText.includes('give me') && (lowerText.includes('reason') || lowerText.includes('why')))) {
-        mockReply = "Absolutely. Here's why:\n\n• Converts DMs into sales, not just replies\n• Trained for your exact audience and niche  \n• 24/7 auto-replies that feel human and persuasive\n• Used by top creators to close inbound DMs at scale\n• Backed by data, results, and real-world conversion boosts\n\nWant a quick preview of how it works for your course?";
-      } else if (lowerText.includes('tell me about') && (lowerText.includes('course') || lowerText.includes('program') || lowerText.includes('business'))) {
-        mockReply = "My course teaches Instagram DM conversion - turning cold messages into paying customers. I've helped 500+ students add $5-15k/month just from better DM strategies. The system works because it's based on psychology, not just templates. What's your current biggest challenge with DMs?";
-      } else if (lowerText.includes('price') || lowerText.includes('cost') || lowerText.includes('expensive')) {
-        mockReply = "I get it - it's an investment. But here's the thing: what's the cost of staying where you are for another year? Most students make back their investment in the first month. Plus, one good client pays for the entire course. Want to see some student results?";
-      } else if (lowerText.includes('interested') || lowerText.includes('tell me more')) {
-        mockReply = "Perfect timing! I just opened a few spots in my next cohort. The transformation is insane - students go from struggling with DMs to closing 3-5 sales per week. Want me to send you some success stories?";
-      } else if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello')) {
-        // Only casual if NO business intent detected
-        if (!lowerText.includes('reason') && !lowerText.includes('business') && !lowerText.includes('course')) {
-          mockReply = "Hey! Going well, thanks for asking. How's your day treating you?";
-        } else {
-          mockReply = "Hey! Absolutely - happy to help with that. What specific part interests you most?";
-        }
-      } else {
-        mockReply = "That's exactly what I help people with! Most of my students were in the same spot. What's your biggest challenge with this right now?";
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      setReply(mockReply);
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      setReply(data.reply);
       setHasTriedFree(true);
       
       toast({
@@ -129,8 +127,9 @@ const Try = () => {
         description: "Your AI-powered response is ready to copy.",
       });
     } catch (error) {
+      console.error('Error calling AI:', error);
       toast({
-        title: "Something went wrong",
+        title: "AI generation failed",
         description: "Please try again in a moment.",
         variant: "destructive",
       });
