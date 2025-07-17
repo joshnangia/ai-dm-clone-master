@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Copy, Zap, Star, Crown } from 'lucide-react';
+import { ArrowLeft, Copy, Zap, Star, Crown, Brain, Target, Sparkles, X } from 'lucide-react';
 
 const SALES_GOALS = [
   { value: 'sell_course', label: 'Sell My Course' },
@@ -26,39 +26,82 @@ const Try = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedReply, setGeneratedReply] = useState('');
   const [hasUsedFreeReply, setHasUsedFreeReply] = useState(false);
+  const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
+  const [analysisSteps, setAnalysisSteps] = useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const generateFreeReply = async () => {
     if (!dmText.trim() || !userHandle || !goal) return;
 
     setIsGenerating(true);
+    
+    // Show analysis popup
+    setShowAnalysisPopup(true);
+    setCurrentStep(0);
+    
+    // Analysis steps
+    const steps = [
+      "🧠 Analyzing message tone and context...",
+      "🎯 Detecting conversation type (casual/sales/objection)...", 
+      "💡 Identifying personality patterns...",
+      "🔥 Crafting psychological hooks...",
+      "⚡ Optimizing for conversion..."
+    ];
+    setAnalysisSteps(steps);
+
     try {
-      // Simulate AI generation with a crafted response based on goal
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API delay
+      // Simulate sophisticated AI analysis
+      for (let i = 0; i < steps.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        setCurrentStep(i + 1);
+      }
       
-      const sampleReplies = {
-        sell_course: `Hey! I totally get where you're coming from. I actually just helped 3 students this week achieve similar results with my proven system. Quick question - are you serious about making this change or just browsing? If you're ready, I have 2 spots left this month.`,
-        sell_product: `I hear you! This is exactly why I created this solution. I've seen hundreds of people struggle with this same issue. Quick question - when you say you're interested, are you looking to solve this in the next 30 days or just exploring options?`,
-        book_call: `That's a great question! I'd love to give you a personalized answer because everyone's situation is unique. I have 3 slots open this week for a quick 15-min strategy call. Are you free Tuesday or Wednesday?`,
-        get_number: `Absolutely! This is actually something I'm passionate about helping with. There's so much to share - way too much for DMs. What's the best number to reach you? I'll shoot you a quick text with some exclusive insights.`,
-        schedule_demo: `Perfect timing! I'm actually doing personalized demos this week to show exactly how this works for your specific situation. I only have 2 slots left - are you free Thursday at 2pm or Friday at 10am?`,
-        build_interest: `I love that you're asking about this! Most people don't even realize this opportunity exists. Without giving away all my secrets here - are you someone who takes action when you see something that works?`,
-        close_deal: `You know what? I can tell you're serious about this. Since you've been following along and asking great questions, I want to make this a no-brainer for you. Are you ready to get started today?`,
-        upsell: `Since you're already seeing results with what you have, you're going to love this next level. I'm only offering this to my best customers - and since you're getting such great results, you're exactly who this is for. Interested?`,
-        convert_lead: `I can see you're really thinking about this seriously. Here's what I know - the people who succeed with this are the ones who decide quickly and take action. Are you ready to be one of those success stories?`
-      };
+      // Smart context-aware replies
+      const casualMessages = ['hey', 'hi', 'hello', 'how are you', 'whats up', 'what\'s up', 'how\'s your day'];
+      const isCasual = casualMessages.some(casual => dmText.toLowerCase().includes(casual)) && dmText.length < 50;
       
-      const reply = sampleReplies[goal as keyof typeof sampleReplies] || 
-        `Thanks for reaching out! I can definitely help you with this. When you say you're interested, are you looking to move forward this week or just gathering information? I want to make sure I give you exactly what you need.`;
+      let reply;
+      
+      if (isCasual) {
+        // Natural, conversational responses for casual messages
+        const casualReplies = [
+          "Hey! Going great, thanks for asking! How's your day treating you?",
+          "Hi there! Doing well over here - how about yourself?", 
+          "Hey! Pretty good day so far, appreciate you checking in! What's been going on with you?",
+          "Hi! Can't complain - hope you're having a solid day too!"
+        ];
+        reply = casualReplies[Math.floor(Math.random() * casualReplies.length)];
+      } else {
+        // Strategic sales responses based on goal
+        const smartReplies = {
+          sell_course: `I can tell you're thinking about this seriously! I've actually been working with people in similar situations and seeing some incredible breakthroughs. Quick question - when you say you're interested, are you looking to make real changes in the next 30 days or still exploring?`,
+          sell_product: `I appreciate you reaching out! This is exactly the kind of challenge I love helping people solve. Based on what you're saying, it sounds like you're ready for a real solution. Are you looking to handle this soon or just gathering info for now?`,
+          book_call: `Great question! I'd actually love to give you a personalized take on this since everyone's situation is unique. I have a few strategy calls open this week - would you be up for a quick 15-min chat? I think I can give you some real clarity.`,
+          get_number: `Absolutely! There's actually quite a bit I'd love to share about this - probably too much for DMs honestly. What's the best number to reach you? I can shoot you a quick message with some insights that might be exactly what you need.`,
+          schedule_demo: `Perfect timing! I'm actually doing some personalized demos this week to show exactly how this works for different situations. I've got 2 spots left - would Thursday at 2 or Friday at 10 work better for you?`,
+          build_interest: `I love that you're asking about this! Most people don't even realize this opportunity exists right now. Without giving away everything here - are you someone who moves quickly when you see something that makes sense?`,
+          close_deal: `You know what? I can tell you're serious about making this happen. Since you've been asking all the right questions, I want to make this simple for you. Ready to move forward today?`,
+          upsell: `Since you're already getting results with what you have, you're going to love what this next level can do. I'm only offering this to people who are already succeeding - and that's exactly who you are. Interested in hearing more?`,
+          convert_lead: `I can see you're really thinking this through, which I respect. Here's what I've learned - the people who succeed are the ones who trust their instincts and take action. Does this feel like the right move for you?`
+        };
+        
+        reply = smartReplies[goal as keyof typeof smartReplies] || 
+          `Thanks for reaching out! I can definitely help with this. When you say you're interested, are you looking to move forward soon or still in the research phase? Want to make sure I give you exactly what you need.`;
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       setGeneratedReply(reply);
       setHasUsedFreeReply(true);
+      setShowAnalysisPopup(false);
       
       toast({
-        title: "Free reply generated!",
-        description: "Want unlimited replies? Upgrade to Pro!",
+        title: "Smart reply generated!",
+        description: "Context-aware AI analysis complete!",
       });
     } catch (error) {
       console.error('Error generating free reply:', error);
+      setShowAnalysisPopup(false);
       toast({
         title: "Error",
         description: "Failed to generate reply. Please try again.",
@@ -66,6 +109,34 @@ const Try = () => {
       });
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleTryAgain = () => {
+    if (hasUsedFreeReply) {
+      setShowAnalysisPopup(true);
+      setCurrentStep(0);
+      
+      const steps = [
+        "🔒 Checking subscription status...",
+        "💳 Free trial already used...",
+        "⭐ Premium features required..."
+      ];
+      setAnalysisSteps(steps);
+      
+      setTimeout(() => {
+        setCurrentStep(1);
+        setTimeout(() => {
+          setCurrentStep(2);
+          setTimeout(() => {
+            setCurrentStep(3);
+            setTimeout(() => {
+              setShowAnalysisPopup(false);
+              // Show upgrade modal instead of allowing generation
+            }, 800);
+          }, 800);
+        }, 800);
+      }, 800);
     }
   };
 
@@ -186,9 +257,15 @@ const Try = () => {
             <Crown className="w-12 h-12 mx-auto mb-4 text-purple-400" />
             <h3 className="text-xl font-bold text-white mb-2">Free Reply Used!</h3>
             <p className="text-gray-300 mb-4">
-              Want unlimited money-making replies? Upgrade to Pro for just $9.99/month
+              Want unlimited smart DM replies? Upgrade to Pro for just $9.99/month
             </p>
             <div className="flex gap-3">
+              <Button 
+                onClick={handleTryAgain}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
+              >
+                Try Again (Demo)
+              </Button>
               <Link to="/auth" className="flex-1">
                 <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
                   Upgrade to Pro
@@ -248,6 +325,60 @@ const Try = () => {
             </Button>
           </Link>
         </div>
+
+        {/* Analysis Popup */}
+        {showAnalysisPopup && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full mx-auto">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Brain className="w-8 h-8 text-white animate-pulse" />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  AI Analysis in Progress
+                </h3>
+                
+                <div className="space-y-4 mb-6">
+                  {analysisSteps.map((step, index) => (
+                    <div 
+                      key={index}
+                      className={`flex items-center space-x-3 transition-all duration-500 ${
+                        index < currentStep ? 'text-green-400' : 
+                        index === currentStep ? 'text-purple-400' : 'text-gray-500'
+                      }`}
+                    >
+                      <div className={`w-2 h-2 rounded-full transition-all duration-500 ${
+                        index < currentStep ? 'bg-green-400' : 
+                        index === currentStep ? 'bg-purple-400 animate-pulse' : 'bg-gray-600'
+                      }`} />
+                      <span className="text-sm">{step}</span>
+                      {index < currentStep && <Sparkles className="w-4 h-4 text-green-400" />}
+                    </div>
+                  ))}
+                </div>
+
+                {currentStep >= analysisSteps.length && (
+                  <div className="text-center">
+                    <Target className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                    <p className="text-green-400 font-semibold">Analysis Complete!</p>
+                  </div>
+                )}
+
+                {hasUsedFreeReply && currentStep >= 3 && (
+                  <div className="text-center mt-6">
+                    <p className="text-purple-300 mb-4">Ready to unlock unlimited smart replies?</p>
+                    <Link to="/auth">
+                      <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                        Upgrade Now
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
