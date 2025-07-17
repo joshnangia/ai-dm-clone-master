@@ -155,7 +155,7 @@ const Try = () => {
                 placeholder="Hey, I saw your story about..."
                 value={dmText}
                 onChange={(e) => setDmText(e.target.value)}
-                className="min-h-40 text-lg bg-white/10 border-white/20 text-white placeholder:text-gray-400 rounded-2xl resize-none"
+                className="min-h-40 text-lg bg-gray-900/80 border-gray-600 text-white placeholder:text-gray-400 rounded-2xl resize-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                 disabled={isLoading}
               />
 
