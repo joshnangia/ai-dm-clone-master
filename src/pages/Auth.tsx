@@ -132,17 +132,22 @@ const Auth = () => {
               />
             </div>
             
-            {/* Clean CTA button */}
+            {/* Premium CTA button */}
             <Button
               onClick={handlePayAndGetAccess}
               disabled={paymentLoading}
-              className="w-full h-14 text-lg font-semibold"
-              style={{ background: 'var(--gradient-premium)' }}
+              className="w-full h-16 text-xl font-bold rounded-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl hover:shadow-2xl relative overflow-hidden group"
+              style={{ 
+                background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #8B5CF6 100%)',
+                backgroundSize: '200% 200%',
+                animation: 'gradient-shift 3s ease infinite'
+              }}
             >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/30 via-transparent to-white/30 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
               {paymentLoading ? (
-                <span>Processing...</span>
+                <span className="relative z-10">Processing...</span>
               ) : (
-                <>Start for $9.99/month</>
+                <span className="relative z-10 tracking-wide">Get Instant Access • $9.99/mo</span>
               )}
             </Button>
             
