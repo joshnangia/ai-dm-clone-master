@@ -18,6 +18,10 @@ export const useAuth = () => {
           console.log('Initial session:', session?.user?.email || 'no user');
           setSession(session);
           setUser(session?.user ?? null);
+          if (session) {
+            // Check subscription status when we have a session
+            setTimeout(() => checkSubscription(session), 100);
+          }
           setLoading(false);
         }
       } catch (error) {
@@ -34,6 +38,10 @@ export const useAuth = () => {
         console.log('Auth change:', event, session?.user?.email || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
+        if (session && event === 'SIGNED_IN') {
+          // Check subscription when user signs in
+          setTimeout(() => checkSubscription(session), 100);
+        }
         setLoading(false);
       }
     });
@@ -48,6 +56,7 @@ export const useAuth = () => {
 
   const checkSubscription = async (userSession: Session) => {
     try {
+      console.log('Checking subscription for user:', userSession.user.email);
       const { data, error } = await supabase.functions.invoke('check-subscription', {
         headers: {
           Authorization: `Bearer ${userSession.access_token}`,
@@ -55,7 +64,11 @@ export const useAuth = () => {
       });
 
       if (!error && data) {
+        console.log('Subscription check result:', data);
         setSubscribed(data.subscribed || false);
+      } else {
+        console.error('Subscription check error:', error);
+        setSubscribed(false);
       }
     } catch (error) {
       console.error('Error checking subscription:', error);

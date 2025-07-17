@@ -44,9 +44,12 @@ const Success = () => {
         });
       } else {
         setVerified(true);
-        if (checkSubscription) {
-          checkSubscription();
-        }
+        // Wait a moment for the database to update, then check subscription
+        setTimeout(() => {
+          if (checkSubscription) {
+            checkSubscription();
+          }
+        }, 500);
         toast({
           title: "Payment successful!",
           description: "Your premium access is now active.",
@@ -101,14 +104,14 @@ const Success = () => {
               Your payment was successful. You now have unlimited access to AI-generated replies.
             </p>
             <div className="space-y-4">
-              <Link to="/try">
+              <Link to="/dashboard">
                 <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 font-bold rounded-lg">
-                  Start Using AI Replies
+                  Go to Dashboard
                 </Button>
               </Link>
-              <Link to="/">
+              <Link to="/try">
                 <Button variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">
-                  Back to Home
+                  Start Using AI Replies
                 </Button>
               </Link>
             </div>
