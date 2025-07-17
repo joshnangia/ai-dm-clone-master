@@ -45,22 +45,23 @@ const SignIn = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
         toast({
-          title: "Error signing in",
+          title: "Sign in failed",
           description: error.message,
           variant: "destructive",
         });
-      } else {
+      } else if (data.user) {
         toast({
           title: "Welcome back!",
           description: "Successfully signed in.",
         });
+        // Navigation will be handled by useEffect
       }
     } catch (error: any) {
       toast({

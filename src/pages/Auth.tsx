@@ -19,8 +19,15 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
+        navigate('/dashboard');
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
         navigate('/dashboard');
       }
     });
@@ -40,11 +47,12 @@ const Auth = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      // First create the account without email confirmation
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`
+          emailRedirectTo: `${window.location.origin}/dashboard`
         }
       });
 
@@ -54,13 +62,29 @@ const Auth = () => {
           description: error.message,
           variant: "destructive",
         });
-      } else {
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account, then sign in.",
+        return;
+      }
+
+      // If user was created, try to sign them in immediately
+      if (data.user) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
-        // Don't go to preview step - user needs to verify email first
-        navigate('/signin');
+
+        if (signInError) {
+          toast({
+            title: "Account created successfully!",
+            description: "Please sign in with your new credentials.",
+          });
+          navigate('/signin');
+        } else {
+          toast({
+            title: "Welcome to InstaReply!",
+            description: "Your account has been created and you're now signed in.",
+          });
+          navigate('/dashboard');
+        }
       }
     } catch (error: any) {
       toast({
