@@ -104,59 +104,97 @@ const Auth = () => {
         </div>
       </nav>
 
-      <div className="max-w-sm mx-auto px-6 py-12">
-        {/* Clean Payment Card */}
-        <Card className="bg-card border-border shadow-2xl animate-fade-in">
-          <CardHeader className="text-center pb-6">
-            <div className="w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center"
-                 style={{ background: 'var(--gradient-premium)' }}>
-              <Star className="w-6 h-6 text-white" />
-            </div>
-            <CardTitle className="text-2xl font-bold text-foreground">
-              Start Using AI Replies
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Join thousands getting perfect replies instantly
-            </CardDescription>
-          </CardHeader>
+      <div className="max-w-md mx-auto px-6 py-16 font-inter">
+        {/* Modern Payment Card */}
+        <div className="relative">
+          {/* Subtle glow effect */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-premium via-premium-secondary to-premium opacity-20 rounded-3xl blur-sm"></div>
           
-          <CardContent className="space-y-6">
-            {/* Simple email input */}
-            <div>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 text-center text-lg"
-                placeholder="Enter your email"
-              />
-            </div>
+          <Card className="relative bg-card/95 backdrop-blur-xl border-0 rounded-3xl shadow-2xl overflow-hidden">
+            {/* Header Section */}
+            <CardHeader className="text-center pt-12 pb-8 px-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 mx-auto"
+                   style={{ background: 'linear-gradient(135deg, #8B5CF6, #EC4899)' }}>
+                <Star className="w-8 h-8 text-white" />
+              </div>
+              
+              <CardTitle className="text-3xl font-bold text-foreground mb-3 tracking-tight">
+                Unlock AI Replies
+              </CardTitle>
+              <CardDescription className="text-lg text-muted-foreground font-medium">
+                Get perfect responses instantly
+              </CardDescription>
+              
+              {/* Social proof */}
+              <div className="flex items-center justify-center mt-6 space-x-1">
+                <div className="flex -space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-green-600"></div>
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-purple-600"></div>
+                </div>
+                <span className="text-sm text-muted-foreground ml-3">Trusted by 12,000+ users</span>
+              </div>
+            </CardHeader>
             
-            {/* Premium CTA button */}
-            <Button
-              onClick={handlePayAndGetAccess}
-              disabled={paymentLoading}
-              className="w-full h-16 text-xl font-bold rounded-2xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl hover:shadow-2xl relative overflow-hidden group"
-              style={{ 
-                background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #8B5CF6 100%)',
-                backgroundSize: '200% 200%',
-                animation: 'gradient-shift 3s ease infinite'
-              }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/30 via-transparent to-white/30 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-              {paymentLoading ? (
-                <span className="relative z-10">Processing...</span>
-              ) : (
-                <span className="relative z-10 tracking-wide">Get Instant Access • $9.99/mo</span>
-              )}
-            </Button>
-            
-            {/* Simple benefits */}
-            <div className="text-center space-y-2 pt-2">
-              <p className="text-sm text-muted-foreground">✓ Unlimited AI replies ✓ Cancel anytime ✓ Works instantly</p>
-            </div>
-          </CardContent>
-        </Card>
+            <CardContent className="px-8 pb-12">
+              {/* Email Input */}
+              <div className="mb-6">
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-14 text-lg bg-background/50 border-2 border-border/50 focus:border-premium rounded-xl transition-all duration-300 placeholder:text-muted-foreground/60"
+                  placeholder="Enter your email address"
+                />
+              </div>
+              
+              {/* Main CTA */}
+              <Button
+                onClick={handlePayAndGetAccess}
+                disabled={paymentLoading}
+                className="w-full h-16 text-xl font-bold rounded-2xl mb-6 relative overflow-hidden group transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl hover:shadow-2xl"
+                style={{ 
+                  background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #8B5CF6 100%)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradient-shift 3s ease infinite'
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                {paymentLoading ? (
+                  <span className="relative z-10">Creating account...</span>
+                ) : (
+                  <div className="relative z-10 flex items-center justify-center space-x-3">
+                    <span>Start for $9.99/month</span>
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  </div>
+                )}
+              </Button>
+              
+              {/* Trust badges */}
+              <div className="text-center space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  ✓ Cancel anytime ✓ 30-day money back ✓ Instant setup
+                </p>
+                
+                {/* Features */}
+                <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-border/50">
+                  <div className="text-center">
+                    <Zap className="w-5 h-5 mx-auto mb-2 text-premium" />
+                    <p className="text-xs font-medium text-muted-foreground">Unlimited<br />Replies</p>
+                  </div>
+                  <div className="text-center">
+                    <Star className="w-5 h-5 mx-auto mb-2 text-premium-secondary" />
+                    <p className="text-xs font-medium text-muted-foreground">AI<br />Psychology</p>
+                  </div>
+                  <div className="text-center">
+                    <Shield className="w-5 h-5 mx-auto mb-2 text-premium-accent" />
+                    <p className="text-xs font-medium text-muted-foreground">Secure<br />& Private</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Existing Users Sign In */}
         <Card className="bg-card border-border">
