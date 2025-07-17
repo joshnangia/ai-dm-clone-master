@@ -106,8 +106,16 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setSubscribed(false);
+    try {
+      console.log('Signing out...');
+      await supabase.auth.signOut();
+      setSubscribed(false);
+      console.log('Signed out successfully');
+      // Redirect to home after sign out
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   return {
