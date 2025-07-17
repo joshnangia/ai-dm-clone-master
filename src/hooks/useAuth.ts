@@ -107,14 +107,20 @@ export const useAuth = () => {
 
   const signOut = async () => {
     try {
-      console.log('Signing out...');
-      await supabase.auth.signOut();
-      setSubscribed(false);
-      console.log('Signed out successfully');
-      // Redirect to home after sign out
-      window.location.href = '/';
+      console.log('SignOut function called');
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Supabase signOut error:', error);
+      } else {
+        console.log('Supabase signOut successful');
+        setUser(null);
+        setSession(null);
+        setSubscribed(false);
+        // Force redirect to home
+        window.location.replace('/');
+      }
     } catch (error) {
-      console.error('Sign out error:', error);
+      console.error('Sign out catch error:', error);
     }
   };
 
