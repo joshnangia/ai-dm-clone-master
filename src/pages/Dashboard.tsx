@@ -55,6 +55,7 @@ const Dashboard = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewReply, setShowNewReply] = useState(false);
+  const [generatedReply, setGeneratedReply] = useState<string>('');
 
   useEffect(() => {
     if (subscribed && user) {
@@ -96,6 +97,7 @@ const Dashboard = () => {
       if (error) throw error;
 
       if (data?.reply) {
+        setGeneratedReply(data.reply);
         toast({
           title: "Sales reply generated!",
           description: "Your money-making response is ready.",
@@ -409,6 +411,39 @@ const Dashboard = () => {
             )}
           </div>
         </div>
+
+        {/* Generated Reply Display */}
+        {generatedReply && (
+          <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border border-purple-500/30 rounded-xl mb-8 animate-scale-in">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-white">🎯 Your Money-Making Reply</h3>
+                  <p className="text-purple-300 text-sm">Ready to send and start making sales!</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => copyToClipboard(generatedReply, 'latest')}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy Reply
+                  </Button>
+                  <Button
+                    onClick={() => setGeneratedReply('')}
+                    variant="outline"
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Dismiss
+                  </Button>
+                </div>
+              </div>
+              <div className="bg-black/40 rounded-xl p-4 border border-purple-500/20">
+                <p className="text-white leading-relaxed whitespace-pre-wrap text-lg">{generatedReply}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Conversation History */}
         <div className="bg-gray-900/50 border border-gray-800 rounded-xl animate-scale-in">
