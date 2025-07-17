@@ -104,132 +104,54 @@ const Auth = () => {
         </div>
       </nav>
 
-      <div className="max-w-md mx-auto px-6 py-12">
-        {/* Premium Payment Popup */}
-        <div className="relative mb-8">
-          {/* Backdrop blur effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-premium/20 via-premium-secondary/20 to-premium-accent/20 rounded-3xl blur-xl"></div>
+      <div className="max-w-sm mx-auto px-6 py-12">
+        {/* Clean Payment Card */}
+        <Card className="bg-card border-border shadow-2xl animate-fade-in">
+          <CardHeader className="text-center pb-6">
+            <div className="w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center"
+                 style={{ background: 'var(--gradient-premium)' }}>
+              <Star className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-foreground">
+              Start Using AI Replies
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Join thousands getting perfect replies instantly
+            </CardDescription>
+          </CardHeader>
           
-          {/* Main payment card */}
-          <div className="relative">
-            <Card className="relative overflow-hidden border-0 bg-card/80 backdrop-blur-xl animate-scale-in"
-                  style={{ 
-                    boxShadow: '0 25px 50px -12px hsl(var(--premium) / 0.4), 0 0 0 1px hsl(var(--premium) / 0.2)',
-                  }}>
-              
-              {/* Animated gradient background */}
-              <div className="absolute inset-0 opacity-30"
-                   style={{ 
-                     background: 'conic-gradient(from 0deg at 50% 50%, hsl(var(--premium)), hsl(var(--premium-secondary)), hsl(var(--premium-accent)), hsl(var(--premium)))',
-                     animation: 'spin 20s linear infinite'
-                   }}></div>
-              
-              {/* Glowing border */}
-              <div className="absolute inset-0 rounded-lg"
-                   style={{ 
-                     background: 'linear-gradient(135deg, hsl(var(--premium)), hsl(var(--premium-secondary)))',
-                     mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                     maskComposite: 'subtract',
-                     padding: '2px'
-                   }}></div>
-              
-              <CardHeader className="relative text-center pb-6 pt-8">
-                {/* Premium badge */}
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 mx-auto relative"
-                     style={{ 
-                       background: 'var(--gradient-premium)',
-                       boxShadow: '0 0 40px hsl(var(--premium) / 0.8), inset 0 1px 0 hsl(0 0% 100% / 0.2)'
-                     }}>
-                  <Star className="w-10 h-10 text-white drop-shadow-lg" />
-                  <div className="absolute inset-0 rounded-full animate-ping"
-                       style={{ background: 'var(--gradient-premium)', opacity: '0.3' }}></div>
-                </div>
-                
-                <div className="space-y-2">
-                  <div className="inline-block px-4 py-1 rounded-full text-xs font-bold text-premium-foreground mb-2"
-                       style={{ background: 'var(--gradient-premium)' }}>
-                    LIMITED TIME OFFER
-                  </div>
-                  <CardTitle className="text-4xl font-black bg-gradient-to-r from-premium via-premium-secondary to-premium-accent bg-clip-text text-transparent leading-tight">
-                    Get Instant Access
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground text-lg font-medium">
-                    Join 10,000+ users who generate perfect replies instantly
-                  </CardDescription>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="relative space-y-6 pb-8">
-                {/* Email input with floating label effect */}
-                <div className="relative">
-                  <Input
-                    id="payment-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-14 bg-background/70 backdrop-blur-sm border-2 border-border/50 focus:border-premium transition-all duration-300 text-lg px-4 rounded-xl peer placeholder-transparent"
-                    placeholder="your@email.com"
-                  />
-                  <Label 
-                    htmlFor="payment-email" 
-                    className="absolute left-4 -top-2.5 bg-card px-2 text-sm font-medium text-premium transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-muted-foreground peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-premium peer-focus:text-sm"
-                  >
-                    Email Address
-                  </Label>
-                </div>
-                
-                {/* Premium CTA Button */}
-                <div className="space-y-4">
-                  <Button
-                    onClick={handlePayAndGetAccess}
-                    disabled={paymentLoading}
-                    className="w-full h-16 font-black text-xl rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-2xl relative overflow-hidden group"
-                    style={{ 
-                      background: 'var(--gradient-premium)',
-                      boxShadow: '0 20px 40px -10px hsl(var(--premium) / 0.6)'
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                    {paymentLoading ? (
-                      <div className="flex items-center space-x-3">
-                        <div className="animate-spin rounded-full h-6 w-6 border-3 border-white border-t-transparent"></div>
-                        <span>Creating secure checkout...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center space-x-3 relative z-10">
-                        <CreditCard className="w-7 h-7" />
-                        <span>Start for $9.99/month</span>
-                        <div className="absolute -right-1 -top-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                      </div>
-                    )}
-                  </Button>
-                  
-                  {/* Trust indicators */}
-                  <div className="text-center space-y-2">
-                    <p className="text-xs text-muted-foreground">✓ Cancel anytime ✓ Secure payment ✓ Instant access</p>
-                  </div>
-                </div>
-                
-                {/* Feature highlights */}
-                <div className="grid grid-cols-3 gap-3 pt-2">
-                  <div className="flex flex-col items-center space-y-3 p-4 rounded-xl bg-gradient-to-br from-premium/10 to-premium-secondary/10 backdrop-blur-sm border border-premium/20">
-                    <Zap className="w-6 h-6 text-premium drop-shadow-sm" />
-                    <span className="text-xs font-semibold text-center text-foreground">Unlimited AI Replies</span>
-                  </div>
-                  <div className="flex flex-col items-center space-y-3 p-4 rounded-xl bg-gradient-to-br from-premium-secondary/10 to-premium-accent/10 backdrop-blur-sm border border-premium-secondary/20">
-                    <Star className="w-6 h-6 text-premium-secondary drop-shadow-sm" />
-                    <span className="text-xs font-semibold text-center text-foreground">Psychology AI</span>
-                  </div>
-                  <div className="flex flex-col items-center space-y-3 p-4 rounded-xl bg-gradient-to-br from-premium-accent/10 to-premium/10 backdrop-blur-sm border border-premium-accent/20">
-                    <Shield className="w-6 h-6 text-premium-accent drop-shadow-sm" />
-                    <span className="text-xs font-semibold text-center text-foreground">Instant Setup</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+          <CardContent className="space-y-6">
+            {/* Simple email input */}
+            <div>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-12 text-center text-lg"
+                placeholder="Enter your email"
+              />
+            </div>
+            
+            {/* Clean CTA button */}
+            <Button
+              onClick={handlePayAndGetAccess}
+              disabled={paymentLoading}
+              className="w-full h-14 text-lg font-semibold"
+              style={{ background: 'var(--gradient-premium)' }}
+            >
+              {paymentLoading ? (
+                <span>Processing...</span>
+              ) : (
+                <>Start for $9.99/month</>
+              )}
+            </Button>
+            
+            {/* Simple benefits */}
+            <div className="text-center space-y-2 pt-2">
+              <p className="text-sm text-muted-foreground">✓ Unlimited AI replies ✓ Cancel anytime ✓ Works instantly</p>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Existing Users Sign In */}
         <Card className="bg-card border-border">
