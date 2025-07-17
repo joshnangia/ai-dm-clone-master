@@ -77,44 +77,7 @@ const Dashboard = () => {
   const [instagramHandle, setInstagramHandle] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  useEffect(() => {
-    if (subscribed && user) {
-      loadConversations();
-      loadUserProfile();
-    }
-  }, [subscribed, user]);
-
-  useEffect(() => {
-    // Redirect to auth if no user after loading is complete
-    if (!loading && !user) {
-      window.location.href = '/auth';
-    }
-  }, [loading, user]);
-
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading while redirecting
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Redirecting to login...</p>
-        </div>
-      </div>
-    );
-  }
-
+  // All hooks must be called before any conditional logic
   const loadConversations = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -160,7 +123,7 @@ const Dashboard = () => {
     }
   }, [user?.id]);
 
-  const saveUserProfile = async () => {
+  const saveUserProfile = useCallback(async () => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -186,7 +149,45 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Error saving profile:', error);
     }
-  };
+  }, [user?.id, instagramHandle, userProfile.saved_handles, userHandle, userProfile.preferred_goals, goal, toast]);
+
+  useEffect(() => {
+    if (subscribed && user) {
+      loadConversations();
+      loadUserProfile();
+    }
+  }, [subscribed, user, loadConversations, loadUserProfile]);
+
+  useEffect(() => {
+    // Redirect to auth if no user after loading is complete
+    if (!loading && !user) {
+      window.location.href = '/auth';
+    }
+  }, [loading, user]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while redirecting
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
 
   const generateNewReply = async () => {
     const finalGoal = goal === 'custom' ? customGoal : getGoalLabel(goal);
