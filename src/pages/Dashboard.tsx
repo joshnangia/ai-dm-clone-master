@@ -54,8 +54,7 @@ const SALES_GOALS = [
   { value: 'build_interest', label: 'Build Interest' },
   { value: 'close_deal', label: 'Close the Deal' },
   { value: 'upsell', label: 'Upsell/Cross-sell' },
-  { value: 'convert_lead', label: 'Convert to Lead' },
-  { value: 'custom', label: 'Custom Goal' }
+  { value: 'convert_lead', label: 'Convert to Lead' }
 ];
 
 
@@ -136,7 +135,7 @@ const Dashboard = () => {
               : [...userProfile.saved_handles, userHandle]
           },
           perks: { 
-            preferred_goals: [...userProfile.preferred_goals, goal].filter(Boolean)
+            preferred_goals: goal ? [goal, ...userProfile.preferred_goals].filter(Boolean) : userProfile.preferred_goals
           }
         });
 
@@ -190,9 +189,7 @@ const Dashboard = () => {
   }
 
   const generateNewReply = async () => {
-    const finalGoal = goal === 'custom' ? customGoal : getGoalLabel(goal);
-    
-    if (!newDmText.trim() || !session || !userHandle || !finalGoal) return;
+    if (!newDmText.trim() || !session || !userHandle || !goal.trim()) return;
 
     setIsGenerating(true);
     setIsAnalyzing(true);
@@ -208,7 +205,7 @@ const Dashboard = () => {
         body: { 
           dmText: newDmText,
           userHandle,
-          goal: finalGoal,
+          goal: goal,
           instagramHandle: instagramHandle || userHandle
         },
         headers: {
@@ -306,10 +303,11 @@ const Dashboard = () => {
       conv.ai_reply.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getGoalLabel = (goal?: string) => {
-    if (!goal) return 'N/A';
-    const found = SALES_GOALS.find(g => g.value === goal);
-    return found ? found.label : goal;
+  const getGoalLabel = (goalText?: string) => {
+    if (!goalText) return 'N/A';
+    // If it matches a preset goal, return the label, otherwise return the custom text
+    const found = SALES_GOALS.find(g => g.label === goalText);
+    return found ? found.label : goalText;
   };
 
   if (!subscribed) {
@@ -654,31 +652,33 @@ const Dashboard = () => {
                     
                     <div>
                       <label className="block text-sm font-semibold mb-3 text-white">
-                        Sales Objective
+                        Your Sales Objective
                       </label>
-                      <Select value={goal} onValueChange={setGoal}>
-                        <SelectTrigger className="bg-gray-800/50 border-gray-600/50 text-white h-14 rounded-xl">
-                          <SelectValue placeholder="What's your sales goal?" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-800 border-gray-700">
-                          {SALES_GOALS.map((goalOption) => (
-                            <SelectItem key={goalOption.value} value={goalOption.value} className="text-white hover:bg-gray-700">
-                              {goalOption.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      {goal === 'custom' && (
+                      <div className="space-y-3">
                         <input
                           type="text"
-                          placeholder="Type your custom sales goal..."
-                          value={customGoal}
-                          onChange={(e) => setCustomGoal(e.target.value)}
-                          className="w-full mt-3 px-4 py-3 bg-gray-800/50 border border-gray-600/50 text-white placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500/50"
+                          placeholder="Type your sales goal... (e.g., Get them to buy my $297 fitness course)"
+                          value={goal}
+                          onChange={(e) => setGoal(e.target.value)}
+                          className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 text-white placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
                           disabled={isGenerating}
                         />
-                      )}
+                        <div>
+                          <p className="text-xs text-gray-400 mb-2">Quick select popular goals:</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {SALES_GOALS.map((goalOption) => (
+                              <button
+                                key={goalOption.value}
+                                onClick={() => setGoal(goalOption.label)}
+                                className="px-3 py-2 bg-purple-600/20 text-purple-300 rounded-lg text-xs hover:bg-purple-600/30 transition-colors text-left"
+                                disabled={isGenerating}
+                              >
+                                {goalOption.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -722,7 +722,7 @@ const Dashboard = () => {
                   <div className="flex gap-4">
                     <Button
                       onClick={generateNewReply}
-                      disabled={isGenerating || !newDmText.trim() || !userHandle || (!goal || (goal === 'custom' && !customGoal))}
+                      disabled={isGenerating || !newDmText.trim() || !userHandle || !goal.trim()}
                       className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 text-lg rounded-xl transition-all duration-300 hover:scale-105 shadow-lg"
                     >
                       {isGenerating ? (
