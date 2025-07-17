@@ -193,10 +193,29 @@ const Dashboard = () => {
 
   if (!subscribed) {
     return (
-      <div className="min-h-screen bg-black text-white relative overflow-hidden">
-        {/* Blurred Background Content */}
-        <div className="blur-sm pointer-events-none opacity-50">
+      <div className="min-h-screen bg-black text-white relative">
+        {/* Blurred Dashboard Background */}
+        <div className="absolute inset-0 filter blur-sm opacity-30">
+          {/* Header */}
+          <div className="bg-black/95 backdrop-blur-sm border-b border-gray-900 sticky top-0 z-20">
+            <div className="px-4 py-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2 text-gray-400">
+                  <ArrowLeft className="w-4 h-4" />
+                  Home
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 px-3 py-1 rounded-full">
+                    <Crown className="w-3 h-3 text-white" />
+                    <span className="text-xs font-semibold text-white">Pro</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="px-4 py-6 max-w-6xl mx-auto">
+            {/* Hero Section */}
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Sales Machine Pro Dashboard
@@ -205,11 +224,12 @@ const Dashboard = () => {
                 Turn every DM into cash with AI-powered sales replies
               </p>
             </div>
-            
+
+            {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
                 <MessageCircle className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-                <div className="text-2xl font-bold text-white">0</div>
+                <div className="text-2xl font-bold text-white">247</div>
                 <p className="text-xs text-gray-400">Sales Replies</p>
               </div>
               <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
@@ -224,72 +244,110 @@ const Dashboard = () => {
               </div>
               <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center">
                 <Zap className="w-8 h-8 mx-auto mb-2 text-pink-400" />
-                <div className="text-2xl font-bold text-white">∞</div>
-                <p className="text-xs text-gray-400">Revenue Potential</p>
+                <div className="text-2xl font-bold text-white">$50K+</div>
+                <p className="text-xs text-gray-400">Revenue Generated</p>
               </div>
             </div>
-            
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
-              <h2 className="text-2xl font-bold text-white mb-4">Generate Money-Making Reply</h2>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gray-800 rounded-lg p-3 h-12"></div>
-                  <div className="bg-gray-800 rounded-lg p-3 h-12"></div>
+
+            {/* Generate New Reply Section */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-xl mb-8">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">Generate Money-Making Reply</h2>
+                    <p className="text-gray-400">Tell us who you are and what you want to sell</p>
+                  </div>
+                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Reply
+                  </Button>
                 </div>
-                <div className="bg-gray-800 rounded-lg p-3 h-32"></div>
-                <div className="bg-purple-600 rounded-lg p-3 h-12"></div>
+                
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-gray-800 rounded-lg h-12 animate-pulse"></div>
+                    <div className="bg-gray-800 rounded-lg h-12 animate-pulse"></div>
+                  </div>
+                  <div className="bg-gray-800 rounded-lg h-32 animate-pulse"></div>
+                  <div className="bg-purple-600/50 rounded-lg h-12 animate-pulse"></div>
+                </div>
               </div>
+            </div>
+
+            {/* Recent Conversations */}
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-gray-900/30 border border-gray-800 rounded-xl p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <div className="bg-gray-700 h-4 w-3/4 rounded animate-pulse mb-2"></div>
+                      <div className="bg-gray-700 h-3 w-1/2 rounded animate-pulse"></div>
+                    </div>
+                    <div className="bg-gray-700 h-8 w-16 rounded animate-pulse"></div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="bg-gray-700 h-3 w-full rounded animate-pulse"></div>
+                    <div className="bg-gray-700 h-3 w-5/6 rounded animate-pulse"></div>
+                    <div className="bg-gray-700 h-3 w-4/5 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Overlay Content */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="bg-black/90 backdrop-blur-sm border border-gray-800 rounded-2xl p-8 max-w-md mx-4">
+        {/* Centered Upgrade Modal */}
+        <div className="absolute inset-0 flex items-center justify-center p-4">
+          <div className="bg-black/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-8 max-w-md w-full shadow-2xl">
             <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Crown className="w-10 h-10 text-white" />
+              {/* Icon */}
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Crown className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-3xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Unlock Sales Machine Pro
-              </h1>
-              <p className="text-gray-300 text-lg mb-6">
-                Turn every DM into cash with AI-powered sales replies
+
+              {/* Title */}
+              <h2 className="text-2xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Unlock Full Access
+              </h2>
+              <p className="text-gray-300 mb-6">
+                Get unlimited AI-powered sales replies and turn every DM into revenue
               </p>
 
+              {/* Features */}
               <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 mb-6 text-left">
-                <h3 className="font-semibold mb-3 text-center text-white">Premium Features:</h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                     <span className="text-sm text-gray-300">Unlimited AI sales replies</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm text-gray-300">9 proven sales goals</span>
+                    <span className="text-sm text-gray-300">9 proven sales psychology frameworks</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm text-gray-300">Psychology-based responses</span>
+                    <span className="text-sm text-gray-300">Advanced conversation analytics</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm text-gray-300">Analytics & tracking</span>
+                    <span className="text-sm text-gray-300">Priority customer support</span>
                   </div>
                 </div>
               </div>
 
+              {/* CTA Button */}
               <Button
                 onClick={handleUpgrade}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 text-lg font-semibold rounded-xl mb-4 transition-all hover:scale-105"
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 text-lg font-semibold rounded-xl mb-4 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-purple-500/25"
               >
-                Get Sales Machine Pro - $9.99/mo
+                Start Pro Plan - $9.99/mo
               </Button>
 
-              <div className="flex justify-between items-center text-xs text-gray-400">
-                <Link to="/" className="hover:text-white transition-colors">← Back</Link>
+              {/* Footer */}
+              <div className="flex justify-between items-center text-xs text-gray-400 pt-4 border-t border-gray-800">
+                <Link to="/" className="hover:text-purple-400 transition-colors">← Back to Home</Link>
                 <span>Cancel anytime</span>
-                <button onClick={signOut} className="hover:text-white transition-colors">Sign Out</button>
+                <button onClick={signOut} className="hover:text-purple-400 transition-colors">Sign Out</button>
               </div>
             </div>
           </div>
