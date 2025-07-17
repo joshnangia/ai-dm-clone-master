@@ -82,11 +82,13 @@ const Try = () => {
       // Simulate the analysis steps with realistic timing
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Mock AI response based on message type
+      // Mock AI response based on message type and context
       const lowerText = dmText.toLowerCase();
       let mockReply = '';
 
-      if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('what\'s up') || lowerText.includes('how are you')) {
+      if (lowerText.includes('tell me about') && (lowerText.includes('course') || lowerText.includes('program'))) {
+        mockReply = "Absolutely! So my course is all about Instagram DM conversion - I teach people how to turn cold DMs into paying customers. I've helped over 500 students generate an extra $5-15k per month just from better DM strategies. What specific part interests you most?";
+      } else if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('what\'s up') || lowerText.includes('how are you')) {
         mockReply = "Hey! Going well, thanks for asking. How's your day treating you?";
       } else if (lowerText.includes('course') && lowerText.includes('how')) {
         mockReply = "It's been incredible! Just had 3 students hit their first $10k month this week. The results speak for themselves - are you looking to level up your game too?";
@@ -95,7 +97,7 @@ const Try = () => {
       } else if (lowerText.includes('interested') || lowerText.includes('tell me more')) {
         mockReply = "Perfect timing! I just opened up a few spots in my next cohort. The transformation my students see is insane. Want me to send you some of their success stories?";
       } else {
-        mockReply = "That's a great question! I love that you're thinking strategically about this. Most successful people ask exactly what you're asking. Here's what I've found works best...";
+        mockReply = "That's actually exactly what I help people with! Most of my students were in the same spot before we worked together. What's your biggest challenge with this right now?";
       }
 
       setReply(mockReply);
