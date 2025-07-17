@@ -273,25 +273,54 @@ const Dashboard = () => {
   };
 
   const handleUpgrade = async () => {
-    if (!user?.email) return;
+    if (!user?.email) {
+      toast({
+        title: "Error",
+        description: "Please log in to upgrade your subscription.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!session?.access_token) {
+      toast({
+        title: "Error", 
+        description: "Session expired. Please log in again.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     try {
+      console.log('Starting checkout for mobile user:', user.email);
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { email: user.email },
         headers: {
-          Authorization: `Bearer ${session?.access_token}`,
+          Authorization: `Bearer ${session.access_token}`,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Checkout error details:', error);
+        throw error;
+      }
+      
       if (data?.url) {
-        window.open(data.url, '_blank');
+        console.log('Checkout URL received, opening:', data.url);
+        // For mobile devices, use location.href instead of window.open for better compatibility
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+          window.location.href = data.url;
+        } else {
+          window.open(data.url, '_blank');
+        }
+      } else {
+        throw new Error('No checkout URL received');
       }
     } catch (error) {
       console.error('Error creating checkout:', error);
       toast({
         title: "Error",
-        description: "Failed to start checkout. Please try again.",
+        description: error.message || "Failed to start checkout. Please try again.",
         variant: "destructive",
       });
     }

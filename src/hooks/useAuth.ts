@@ -109,28 +109,46 @@ export const useAuth = () => {
     try {
       console.log('SignOut function called');
       
-      // Clear any sensitive data from memory
+      // Clear any sensitive data from memory first
       setUser(null);
       setSession(null);
       setSubscribed(false);
       
-      // Clear localStorage/sessionStorage
-      localStorage.removeItem('supabase.auth.token');
-      sessionStorage.clear();
+      // Clear all possible auth-related storage items
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+        // Clear specific Supabase keys that might exist
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+          if (key.includes('supabase') || key.includes('auth')) {
+            localStorage.removeItem(key);
+          }
+        });
+      } catch (storageError) {
+        console.warn('Storage clear error:', storageError);
+      }
       
-      const { error } = await supabase.auth.signOut();
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut({ scope: 'global' });
       if (error) {
         console.error('Supabase signOut error:', error);
       } else {
         console.log('Supabase signOut successful');
       }
       
-      // Force redirect to home with cache busting
-      window.location.replace('/?t=' + Date.now());
+      // Small delay to ensure cleanup completes
+      setTimeout(() => {
+        // Force hard reload to clear any cached state
+        window.location.href = '/';
+      }, 100);
+      
     } catch (error) {
       console.error('Sign out catch error:', error);
       // Force redirect even if there's an error
-      window.location.replace('/');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
     }
   };
 
