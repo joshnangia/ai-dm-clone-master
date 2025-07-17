@@ -28,18 +28,19 @@ const Try = () => {
   const simulateAnalysis = () => {
     setShowAnalysis(true);
     
-    // Determine message type and context
+    // Determine message type and context - PRIORITIZE BUSINESS INTENT
     const lowerText = dmText.toLowerCase();
     let messageType = '';
     let tone = '';
     let context = '';
     let strategy = '';
 
-    if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('what\'s up') || lowerText.includes('how are you')) {
-      messageType = 'Casual/Social';
-      tone = 'Friendly & Relaxed';
-      context = 'Opening conversation or greeting';
-      strategy = 'Match their energy, build rapport naturally';
+    // BUSINESS INTENT DETECTION (highest priority)
+    if (lowerText.includes('reason') || lowerText.includes('why should') || lowerText.includes('convince me') || lowerText.includes('what makes') || lowerText.includes('tell me about') || lowerText.includes('give me')) {
+      messageType = 'Sales Interest / Objection Response';
+      tone = 'Curious & Evaluating';
+      context = 'Asking for value proposition or reasons to buy';
+      strategy = 'Provide specific, credible value points with social proof';
     } else if (lowerText.includes('price') || lowerText.includes('cost') || lowerText.includes('expensive') || lowerText.includes('buy') || lowerText.includes('purchase')) {
       messageType = 'Sales/Business';
       tone = 'Professional & Persuasive';
@@ -50,11 +51,17 @@ const Try = () => {
       tone = 'Engaged & Curious';
       context = 'Showing interest in offer';
       strategy = 'Provide value, build excitement, guide to next step';
+    } else if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('what\'s up') || lowerText.includes('how are you')) {
+      // Only treat as casual if NO business intent detected
+      messageType = 'Casual/Social';
+      tone = 'Friendly & Relaxed';
+      context = 'Opening conversation or greeting';
+      strategy = 'Match their energy, build rapport naturally';
     } else {
-      messageType = 'General Inquiry';
-      tone = 'Neutral & Helpful';
-      context = 'Information seeking';
-      strategy = 'Provide helpful response, build connection';
+      messageType = 'General Business Inquiry';
+      tone = 'Professional & Helpful';
+      context = 'Information seeking with business intent';
+      strategy = 'Provide helpful response, show expertise, build connection';
     }
 
     setAnalysis({
@@ -82,22 +89,28 @@ const Try = () => {
       // Simulate the analysis steps with realistic timing
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Mock AI response based on message type and context
+      // AI response based on BUSINESS INTENT FIRST
       const lowerText = dmText.toLowerCase();
       let mockReply = '';
 
-      if (lowerText.includes('tell me about') && (lowerText.includes('course') || lowerText.includes('program'))) {
-        mockReply = "Absolutely! So my course is all about Instagram DM conversion - I teach people how to turn cold DMs into paying customers. I've helped over 500 students generate an extra $5-15k per month just from better DM strategies. What specific part interests you most?";
-      } else if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('what\'s up') || lowerText.includes('how are you')) {
-        mockReply = "Hey! Going well, thanks for asking. How's your day treating you?";
-      } else if (lowerText.includes('course') && lowerText.includes('how')) {
-        mockReply = "It's been incredible! Just had 3 students hit their first $10k month this week. The results speak for themselves - are you looking to level up your game too?";
+      // PRIORITIZE BUSINESS QUESTIONS
+      if (lowerText.includes('reason') || lowerText.includes('why should') || lowerText.includes('convince me') || lowerText.includes('what makes') || (lowerText.includes('give me') && (lowerText.includes('reason') || lowerText.includes('why')))) {
+        mockReply = "Absolutely. Here's why:\n\n• Converts DMs into sales, not just replies\n• Trained for your exact audience and niche  \n• 24/7 auto-replies that feel human and persuasive\n• Used by top creators to close inbound DMs at scale\n• Backed by data, results, and real-world conversion boosts\n\nWant a quick preview of how it works for your course?";
+      } else if (lowerText.includes('tell me about') && (lowerText.includes('course') || lowerText.includes('program') || lowerText.includes('business'))) {
+        mockReply = "My course teaches Instagram DM conversion - turning cold messages into paying customers. I've helped 500+ students add $5-15k/month just from better DM strategies. The system works because it's based on psychology, not just templates. What's your current biggest challenge with DMs?";
       } else if (lowerText.includes('price') || lowerText.includes('cost') || lowerText.includes('expensive')) {
-        mockReply = "I totally get that - it's an investment. But think about it this way: what's the cost of staying where you are for another year? Most of my students make back their investment in the first month.";
+        mockReply = "I get it - it's an investment. But here's the thing: what's the cost of staying where you are for another year? Most students make back their investment in the first month. Plus, one good client pays for the entire course. Want to see some student results?";
       } else if (lowerText.includes('interested') || lowerText.includes('tell me more')) {
-        mockReply = "Perfect timing! I just opened up a few spots in my next cohort. The transformation my students see is insane. Want me to send you some of their success stories?";
+        mockReply = "Perfect timing! I just opened a few spots in my next cohort. The transformation is insane - students go from struggling with DMs to closing 3-5 sales per week. Want me to send you some success stories?";
+      } else if (lowerText.includes('hey') || lowerText.includes('hi') || lowerText.includes('hello')) {
+        // Only casual if NO business intent detected
+        if (!lowerText.includes('reason') && !lowerText.includes('business') && !lowerText.includes('course')) {
+          mockReply = "Hey! Going well, thanks for asking. How's your day treating you?";
+        } else {
+          mockReply = "Hey! Absolutely - happy to help with that. What specific part interests you most?";
+        }
       } else {
-        mockReply = "That's actually exactly what I help people with! Most of my students were in the same spot before we worked together. What's your biggest challenge with this right now?";
+        mockReply = "That's exactly what I help people with! Most of my students were in the same spot. What's your biggest challenge with this right now?";
       }
 
       setReply(mockReply);
