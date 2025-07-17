@@ -27,12 +27,40 @@ serve(async (req) => {
     console.log('User handle:', userHandle);
     console.log('Goal:', goal);
 
+    // Input validation and sanitization
     if (!dmText || !dmText.trim()) {
       return new Response(JSON.stringify({ error: 'DM text is required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // Validate input lengths
+    if (dmText.length > 2000) {
+      return new Response(JSON.stringify({ error: 'DM text too long (max 2000 characters)' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (goal && goal.length > 500) {
+      return new Response(JSON.stringify({ error: 'Goal too long (max 500 characters)' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (userHandle && userHandle.length > 100) {
+      return new Response(JSON.stringify({ error: 'User handle too long (max 100 characters)' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Sanitize inputs
+    const sanitizedDmText = dmText.trim().replace(/[<>]/g, '');
+    const sanitizedGoal = goal ? goal.trim().replace(/[<>]/g, '') : null;
+    const sanitizedUserHandle = userHandle ? userHandle.trim().replace(/[<>]/g, '') : null;
 
     // Check if this is a free try (no auth) or authenticated user
     const authHeader = req.headers.get('Authorization');
@@ -82,8 +110,8 @@ serve(async (req) => {
     // MASSIVELY IMPROVED AI SYSTEM
     let systemPrompt = `You are an ELITE DM response AI that generates natural, persuasive replies.
 
-🎯 GOAL: ${goal}
-🏢 BUSINESS: ${userHandle}
+🎯 GOAL: ${sanitizedGoal}
+🏢 BUSINESS: ${sanitizedUserHandle}
 
 🧠 CORE RULES:
 1. ONLY return the actual reply text - no analysis, no explanations
@@ -127,13 +155,13 @@ REMEMBER: Just return the reply text they should send. No extra analysis or form
           },
           {
             role: 'user',
-            content: `MESSAGE: "${dmText}"
+            content: `MESSAGE: "${sanitizedDmText}"
 
 Generate the perfect reply for this message. 
 
 CONTEXT:
-- Business: ${userHandle}  
-- Goal: ${goal}
+- Business: ${sanitizedUserHandle}  
+- Goal: ${sanitizedGoal}
 
 INSTRUCTIONS:
 - Return ONLY the reply text (what they should actually send)
@@ -168,9 +196,9 @@ Just the reply text, nothing else:`
         .from('conversations')
         .insert({
           user_id: user.id,
-          original_message: dmText,
+          original_message: sanitizedDmText,
           ai_reply: generatedReply,
-          goal: goal || null
+          goal: sanitizedGoal || null
         });
     }
 

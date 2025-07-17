@@ -25,9 +25,16 @@ serve(async (req) => {
     
     const { sessionId } = requestBody;
     
+    // Input validation
     if (!sessionId) {
       logStep("ERROR: No session ID provided");
       throw new Error("Session ID is required");
+    }
+
+    // Validate sessionId format (Stripe session IDs start with cs_)
+    if (typeof sessionId !== 'string' || !sessionId.match(/^cs_[a-zA-Z0-9_]+$/)) {
+      logStep("ERROR: Invalid session ID format");
+      throw new Error("Invalid session ID format");
     }
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
