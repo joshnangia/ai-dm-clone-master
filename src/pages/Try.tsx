@@ -37,12 +37,17 @@ const Try = () => {
       return;
     }
 
-    // If user is logged in but not subscribed, show paywall
-    if (!subscribed) {
+    // If user has already used free try and is not subscribed, show paywall
+    if (hasUsedOnce && !subscribed) {
       setGeneratedReply("PAYWALL");
+      return;
+    }
+
+    // If user is logged in but not subscribed and hasn't used free try, allow 1 free generation
+    if (!subscribed && !hasUsedOnce) {
+      // Mark as used after this generation
       localStorage.setItem('usedOnce', 'true');
       setHasUsedOnce(true);
-      return;
     }
 
     setIsLoading(true);
@@ -99,8 +104,8 @@ const Try = () => {
   // Show loading while checking auth
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -108,46 +113,57 @@ const Try = () => {
   // Used state - show upgrade
   if (hasUsedOnce && !generatedReply) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
         <div className="max-w-md mx-auto text-center">
-          <div className="text-6xl mb-6">😤</div>
-          <h1 className="text-3xl font-black mb-6">
+          <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Copy className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h1 className="text-3xl font-bold mb-6">
             You Already Used Your Free Try
           </h1>
-          <p className="text-xl text-gray-300 mb-8">
-            Want unlimited AI replies?
-            <br />
-            <span className="text-white font-bold">Just $9.99/month</span>
+          <p className="text-xl text-muted-foreground mb-8">
+            Ready for unlimited AI replies?
           </p>
-            <Button 
-              size="lg" 
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300"
-              onClick={handleStripeCheckout}
-            >
-            Unlock Unlimited Access (TEST)
+          <Button 
+            size="lg" 
+            className="w-full py-6 text-lg font-semibold rounded-xl transition-all hover:scale-105"
+            onClick={handleStripeCheckout}
+          >
+            Get InstaDM Pro - $9.99/mo
           </Button>
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            Cancel anytime
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="px-4 py-8">
         {/* Back link */}
         <div className="mb-4">
-          <Link to="/" className="text-gray-400 hover:text-white">← Back</Link>
+          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">← Back</Link>
         </div>
 
         {!generatedReply ? (
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-black mb-4">
-                Paste Your DM Here
+              <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 animate-fade-in">
+                <Copy className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h1 className="text-3xl font-bold mb-4">
+                Try InstaDM Pro Free
               </h1>
-              <p className="text-gray-300">
-                AI will write the perfect reply in seconds
+              <p className="text-muted-foreground">
+                Paste their message and get a perfect AI reply
               </p>
+              {!hasUsedOnce && (
+                <p className="text-sm text-primary mt-2">
+                  ✨ This is your free try!
+                </p>
+              )}
             </div>
 
             <div className="space-y-6">
@@ -155,18 +171,18 @@ const Try = () => {
                 placeholder="Hey, I saw your story about..."
                 value={dmText}
                 onChange={(e) => setDmText(e.target.value)}
-                className="min-h-40 text-lg bg-gray-900/80 border-gray-600 text-white placeholder:text-gray-400 rounded-2xl resize-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                className="min-h-40 text-lg rounded-xl resize-none"
                 disabled={isLoading}
               />
 
               <Button
                 onClick={generateReply}
                 disabled={isLoading || !dmText.trim()}
-                className="w-full py-6 text-xl font-black bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-2xl transform hover:scale-105 transition-all duration-300"
+                className="w-full py-6 text-lg font-semibold rounded-xl transition-all hover:scale-105"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center space-x-2">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-current"></div>
                     <span>AI is thinking...</span>
                   </div>
                 ) : (
@@ -176,47 +192,65 @@ const Try = () => {
             </div>
           </div>
         ) : generatedReply === "PAYWALL" ? (
-          <div className="max-w-md mx-auto">
-            {/* Seamless continuation that matches the vibe */}
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-black mb-4">
-                Your Reply Is Ready
-              </h2>
-              <p className="text-gray-300">
-                Upgrade to unlimited access
-              </p>
+          <div className="max-w-md mx-auto text-center">
+            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 animate-scale-in">
+              <Check className="w-8 h-8 text-primary-foreground" />
+            </div>
+            
+            <h2 className="text-3xl font-bold mb-4">
+              Your Free Try Is Complete!
+            </h2>
+            <p className="text-muted-foreground mb-8">
+              Get unlimited AI replies and advanced features
+            </p>
+
+            <div className="bg-card rounded-2xl p-6 mb-6 text-left border">
+              <h3 className="font-semibold mb-4 text-center">Unlock full access:</h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span className="text-sm">Unlimited AI-generated replies</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span className="text-sm">8 proven conversation strategies</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span className="text-sm">Conversation history & analytics</span>
+                </div>
+              </div>
             </div>
 
-            {/* Simple clean upgrade */}
             <Button 
-              size="lg" 
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-xl font-black rounded-2xl transform hover:scale-105 transition-all duration-300 mb-4"
               onClick={handleStripeCheckout}
+              className="w-full py-6 text-lg font-semibold rounded-xl mb-4 transition-all hover:scale-105"
             >
-              Get Unlimited Access - $9.99/mo (TEST)
+              Get InstaDM Pro - $9.99/mo
             </Button>
             
-            <p className="text-center text-sm text-gray-400">
-              Cancel anytime
+            <p className="text-center text-sm text-muted-foreground">
+              Start getting better responses today • Cancel anytime
             </p>
           </div>
         ) : (
-          <div className="max-w-md mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-black mb-4">
-                Your Perfect Reply
-              </h2>
-              <p className="text-gray-300">
-                Copy and paste this reply
-              </p>
+          <div className="max-w-md mx-auto text-center">
+            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 animate-scale-in">
+              <Check className="w-8 h-8 text-primary-foreground" />
             </div>
+            
+            <h2 className="text-3xl font-bold mb-4">
+              Your Perfect Reply
+            </h2>
+            <p className="text-muted-foreground mb-8">
+              Copy this reply and send it
+            </p>
 
-            <div className="bg-white/10 border border-white/20 rounded-2xl p-6 mb-6">
-              <p className="text-lg leading-relaxed mb-4">{generatedReply}</p>
+            <div className="bg-card border rounded-2xl p-6 mb-6">
+              <p className="text-lg leading-relaxed mb-4 text-left">{generatedReply}</p>
               <Button
                 onClick={copyToClipboard}
-                variant="secondary"
-                className="w-full font-bold py-3 rounded-xl flex items-center justify-center gap-2"
+                className="w-full font-semibold py-3 rounded-xl flex items-center justify-center gap-2"
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                 {copied ? 'Copied!' : 'Copy Reply'}
@@ -224,6 +258,15 @@ const Try = () => {
             </div>
 
             <div className="text-center space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Want unlimited access to all features?
+              </p>
+              <Button
+                onClick={handleStripeCheckout}
+                className="w-full mb-4"
+              >
+                Get InstaDM Pro - $9.99/mo
+              </Button>
               <Button
                 onClick={() => {
                   setGeneratedReply('');
@@ -232,7 +275,7 @@ const Try = () => {
                 variant="outline"
                 className="w-full"
               >
-                Generate Another Reply
+                Back
               </Button>
             </div>
           </div>
