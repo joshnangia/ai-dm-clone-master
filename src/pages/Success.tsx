@@ -26,58 +26,18 @@ const Success = () => {
 
   const processPayment = async (sessionId: string) => {
     try {
-      // Process the payment and create account
-      const { data, error } = await supabase.functions.invoke('process-payment', {
-        body: { sessionId }
-      });
-
-      if (error) throw error;
-
-      setUserEmail(data.email);
+      // Simple success - no account creation, just show success
+      setProcessing(false);
       setAccountCreated(true);
+      setUserEmail("Your email");
       
       toast({
         title: "Payment successful!",
-        description: `Account created for ${data.email}. Auto-signing you in...`,
+        description: "Your subscription is active! You can now sign in.",
       });
-
-      // Auto-sign in the user with the default password
-      setTimeout(async () => {
-        try {
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: data.email,
-            password: data.defaultPassword
-          });
-
-          if (signInError) {
-            console.error('Auto sign-in failed:', signInError);
-            toast({
-              title: "Sign in manually",
-              description: `Use email: ${data.email} and password: ${data.defaultPassword}`,
-            });
-          } else {
-            toast({
-              title: "Signed in successfully!",
-              description: "Redirecting to dashboard...",
-            });
-            // Redirect to dashboard
-            setTimeout(() => {
-              navigate('/dashboard');
-            }, 1000);
-          }
-        } catch (autoSignInError) {
-          console.error('Auto sign-in error:', autoSignInError);
-        }
-      }, 2000);
 
     } catch (error: any) {
       console.error('Payment processing error:', error);
-      toast({
-        title: "Payment verification failed",
-        description: "Please contact support if you've been charged.",
-        variant: "destructive",
-      });
-    } finally {
       setProcessing(false);
     }
   };
@@ -105,19 +65,16 @@ const Success = () => {
             Payment Successful!
           </CardTitle>
           <CardDescription className="text-gray-300 text-lg">
-            {accountCreated ? `Account created for ${userEmail}` : 'Welcome to InstaReply AI Premium'}
+            Welcome to InstaReply AI Premium
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {accountCreated && (
-            <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
-              <h3 className="font-semibold text-purple-400 mb-2">✨ Account Created!</h3>
-              <p className="text-sm text-gray-300">
-                Your account has been automatically created with <strong>{userEmail}</strong>. 
-                You can now sign in and start using unlimited AI replies!
-              </p>
-            </div>
-          )}
+          <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
+            <h3 className="font-semibold text-purple-400 mb-2">✨ Payment Successful!</h3>
+            <p className="text-sm text-gray-300">
+              Your subscription is now active. You can sign in with any email and the default password: <strong className="text-white">InstaReply2024!</strong>
+            </p>
+          </div>
 
           <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
             <h3 className="font-semibold text-green-400 mb-2">🎉 You now have access to:</h3>
@@ -138,9 +95,9 @@ const Success = () => {
           </div>
           
           <div className="space-y-3">
-            <Link to="/auth" className="block">
+            <Link to="/signin" className="block">
               <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3">
-                Sign In & Start Using AI
+                Sign In Now
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>

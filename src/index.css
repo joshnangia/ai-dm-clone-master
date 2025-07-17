@@ -161,3 +161,26 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Button fixes for proper contrast */
+button {
+  color: inherit;
+}
+
+/* Fix gradient button text to always be white */
+button.bg-gradient-to-r,
+.bg-gradient-to-r button {
+  color: white !important;
+}
+
+/* Ensure outline buttons have proper contrast */
+.btn-outline {
+  background: transparent !important;
+  color: #8B5CF6 !important;
+  border: 2px solid #8B5CF6 !important;
+}
+
+.btn-outline:hover {
+  background: #8B5CF6 !important;
+  color: white !important;
+}

@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Try from "./pages/Try";
 import Unlock from "./pages/Unlock";
 import Auth from "./pages/Auth";
+import SignIn from "./pages/SignIn";
 import Success from "./pages/Success";
 import Dashboard from "./pages/Dashboard";
 import FAQ from "./pages/FAQ";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/try" element={<Try />} />
           <Route path="/unlock" element={<Unlock />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/signin" element={<SignIn />} />
           <Route path="/success" element={<Success />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/faq" element={<FAQ />} />

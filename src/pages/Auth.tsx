@@ -261,7 +261,7 @@ const Auth = () => {
             
             <div className="mt-6">
               <Button 
-                onClick={() => setStep('signin')} 
+                onClick={() => navigate('/signin')} 
                 variant="ghost" 
                 className="text-purple-400 hover:text-purple-300"
               >
