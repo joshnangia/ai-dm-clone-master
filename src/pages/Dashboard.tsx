@@ -26,40 +26,30 @@ interface Conversation {
   id: string;
   original_message: string;
   ai_reply: string;
-  conversation_type?: string;
+  user_handle?: string;
   goal?: string;
   created_at: string;
 }
 
-const CONVERSATION_TYPES = [
-  { value: 'cold_dm', label: 'Cold DM' },
-  { value: 'follow_up', label: 'Follow-up Message' },
-  { value: 'story_reply', label: 'Story Reply' },
-  { value: 'casual_chat', label: 'Casual Conversation' },
-  { value: 'flirty', label: 'Flirty Message' },
-  { value: 'funny', label: 'Funny/Witty' },
-  { value: 'supportive', label: 'Supportive Message' },
-  { value: 'comeback', label: 'Comeback/Response' }
+const SALES_GOALS = [
+  { value: 'sell_course', label: 'Sell My Course' },
+  { value: 'sell_product', label: 'Sell My Product' },
+  { value: 'book_call', label: 'Book a Sales Call' },
+  { value: 'get_number', label: 'Get Their Number' },
+  { value: 'schedule_demo', label: 'Schedule a Demo' },
+  { value: 'build_interest', label: 'Build Interest' },
+  { value: 'close_deal', label: 'Close the Deal' },
+  { value: 'upsell', label: 'Upsell/Cross-sell' },
+  { value: 'convert_lead', label: 'Convert to Lead' }
 ];
 
-const CONVERSATION_GOALS = [
-  { value: 'get_response', label: 'Get a Response' },
-  { value: 'start_conversation', label: 'Start Conversation' },
-  { value: 'get_number', label: 'Get Their Number' },
-  { value: 'schedule_meetup', label: 'Schedule a Meetup' },
-  { value: 'build_connection', label: 'Build Connection' },
-  { value: 'be_memorable', label: 'Be Memorable' },
-  { value: 'show_interest', label: 'Show Interest' },
-  { value: 'keep_talking', label: 'Keep the Conversation Going' },
-  { value: 'make_laugh', label: 'Make Them Laugh' }
-];
 
 const Dashboard = () => {
   const { user, session, subscribed, signOut } = useAuth();
   const { toast } = useToast();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [newDmText, setNewDmText] = useState('');
-  const [conversationType, setConversationType] = useState('');
+  const [userHandle, setUserHandle] = useState('');
   const [goal, setGoal] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -88,14 +78,14 @@ const Dashboard = () => {
   };
 
   const generateNewReply = async () => {
-    if (!newDmText.trim() || !session || !conversationType || !goal) return;
+    if (!newDmText.trim() || !session || !userHandle || !goal) return;
 
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-reply', {
         body: { 
           dmText: newDmText,
-          conversationType,
+          userHandle,
           goal
         },
         headers: {
@@ -107,11 +97,11 @@ const Dashboard = () => {
 
       if (data?.reply) {
         toast({
-          title: "🎯 Sales reply generated!",
-          description: "Your high-converting response is ready.",
+          title: "Sales reply generated!",
+          description: "Your money-making response is ready.",
         });
         setNewDmText('');
-        setConversationType('');
+        setUserHandle('');
         setGoal('');
         setShowNewReply(false);
         loadConversations();
@@ -172,15 +162,9 @@ const Dashboard = () => {
       conv.ai_reply.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getTypeLabel = (type?: string) => {
-    if (!type) return 'N/A';
-    const found = CONVERSATION_TYPES.find(t => t.value === type);
-    return found ? found.label : type;
-  };
-
   const getGoalLabel = (goal?: string) => {
     if (!goal) return 'N/A';
-    const found = CONVERSATION_GOALS.find(g => g.value === goal);
+    const found = SALES_GOALS.find(g => g.value === goal);
     return found ? found.label : goal;
   };
 
@@ -209,31 +193,31 @@ const Dashboard = () => {
                 <MessageCircle className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Unlock InstaDM Pro
+                Unlock Sales Machine Pro
               </h1>
               <p className="text-gray-300 text-lg">
-                Generate perfect Instagram DM replies that get responses
+                Turn every DM into cash with AI-powered sales replies
               </p>
             </div>
 
             <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 mb-6 text-left">
-              <h3 className="font-semibold mb-4 text-center text-white">What you get:</h3>
+              <h3 className="font-semibold mb-4 text-center text-white">Turn DMs into dollars:</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">8 conversation types</span>
+                  <span className="text-sm text-gray-300">AI analyzes your business & creates perfect sales replies</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">9 strategic goals</span>
+                  <span className="text-sm text-gray-300">9 proven sales goals (sell courses, products, book calls)</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">Unlimited AI-generated replies</span>
+                  <span className="text-sm text-gray-300">Unlimited money-making responses</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">Conversation history & analytics</span>
+                  <span className="text-sm text-gray-300">Sales analytics & conversion tracking</span>
                 </div>
               </div>
             </div>
@@ -242,11 +226,11 @@ const Dashboard = () => {
               onClick={handleUpgrade}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-6 text-lg font-semibold rounded-xl mb-4 transition-all hover:scale-105"
             >
-              Get InstaDM Pro - $9.99/mo
+              Get Sales Machine Pro - $9.99/mo
             </Button>
 
             <p className="text-xs text-gray-400">
-              Start getting better responses today • Cancel anytime
+              Start making money from DMs today • Cancel anytime
             </p>
 
             <div className="mt-6 pt-6 border-t border-gray-800">
@@ -295,10 +279,10 @@ const Dashboard = () => {
         {/* Hero Section */}
         <div className="text-center mb-8 animate-fade-in">
           <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            InstaDM Pro Dashboard
+            Sales Machine Pro Dashboard
           </h1>
           <p className="text-xl text-gray-300">
-            Generate perfect Instagram DM replies with AI
+            Turn every DM into cash with AI-powered sales replies
           </p>
         </div>
 
@@ -307,7 +291,7 @@ const Dashboard = () => {
           <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
             <MessageCircle className="w-8 h-8 mx-auto mb-2 text-purple-400" />
             <div className="text-2xl font-bold text-white">{conversations.length}</div>
-            <p className="text-xs text-gray-400">Generated Replies</p>
+            <p className="text-xs text-gray-400">Sales Replies</p>
           </div>
           <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
             <Target className="w-8 h-8 mx-auto mb-2 text-pink-400" />
@@ -316,13 +300,13 @@ const Dashboard = () => {
           </div>
           <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
             <TrendingUp className="w-8 h-8 mx-auto mb-2 text-purple-400" />
-            <div className="text-2xl font-bold text-white">8</div>
-            <p className="text-xs text-gray-400">Message Types</p>
+            <div className="text-2xl font-bold text-white">9</div>
+            <p className="text-xs text-gray-400">Sales Goals</p>
           </div>
           <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-4 text-center hover:bg-gray-900/70 transition-colors">
             <Zap className="w-8 h-8 mx-auto mb-2 text-pink-400" />
-            <div className="text-2xl font-bold text-white">9</div>
-            <p className="text-xs text-gray-400">Goals</p>
+            <div className="text-2xl font-bold text-white">∞</div>
+            <p className="text-xs text-gray-400">Revenue Potential</p>
           </div>
         </div>
 
@@ -331,9 +315,9 @@ const Dashboard = () => {
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-white">Generate Perfect Reply</h2>
+                <h2 className="text-2xl font-bold text-white">Generate Money-Making Reply</h2>
                 <p className="text-gray-400">
-                  Choose your strategy and create the perfect response
+                  Tell us who you are and what you want to sell
                 </p>
               </div>
               <Button
@@ -347,36 +331,32 @@ const Dashboard = () => {
             
             {showNewReply && (
               <div className="space-y-6">
-                {/* Strategy Selection */}
+                {/* User Info & Sales Goal */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2 text-white">
-                      Conversation Type
+                      Your Handle/Business
                     </label>
-                    <Select value={conversationType} onValueChange={setConversationType}>
-                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                        <SelectValue placeholder="Choose your approach..." />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-700">
-                        {CONVERSATION_TYPES.map((type) => (
-                          <SelectItem key={type.value} value={type.value} className="text-white hover:bg-gray-700">
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <input
+                      type="text"
+                      placeholder="e.g. @fitnessguru, Course Creator, Product Owner"
+                      value={userHandle}
+                      onChange={(e) => setUserHandle(e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-purple-500/50"
+                      disabled={isGenerating}
+                    />
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium mb-2 text-white">
-                      Goal
+                      Sales Goal
                     </label>
                     <Select value={goal} onValueChange={setGoal}>
                       <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                        <SelectValue placeholder="What's your goal?" />
+                        <SelectValue placeholder="What do you want to sell?" />
                       </SelectTrigger>
                       <SelectContent className="bg-gray-800 border-gray-700">
-                        {CONVERSATION_GOALS.map((goalOption) => (
+                        {SALES_GOALS.map((goalOption) => (
                           <SelectItem key={goalOption.value} value={goalOption.value} className="text-white hover:bg-gray-700">
                             {goalOption.label}
                           </SelectItem>
@@ -403,17 +383,17 @@ const Dashboard = () => {
                 <div className="flex gap-3">
                   <Button
                     onClick={generateNewReply}
-                    disabled={isGenerating || !newDmText.trim() || !conversationType || !goal}
+                    disabled={isGenerating || !newDmText.trim() || !userHandle || !goal}
                     className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 transition-all hover:scale-105"
                   >
                     {isGenerating ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Generating Reply...
+                        Generating Sales Reply...
                       </>
                     ) : (
                       <>
-                        Generate Perfect Reply
+                        Generate Money-Making Reply
                       </>
                     )}
                   </Button>
@@ -435,9 +415,9 @@ const Dashboard = () => {
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-xl font-bold text-white">Your Replies</h2>
+                <h2 className="text-xl font-bold text-white">Your Sales Arsenal</h2>
                 <p className="text-gray-400">
-                  Generated conversation history
+                  Money-making replies that convert
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -457,9 +437,9 @@ const Dashboard = () => {
             {filteredConversations.length === 0 ? (
               <div className="text-center py-8">
                 <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-600" />
-                <p className="text-gray-400 mb-2">No conversations yet</p>
+                <p className="text-gray-400 mb-2">No sales replies yet</p>
                 <p className="text-gray-500 text-sm">
-                  Generate your first reply above
+                  Generate your first money-making reply above
                 </p>
               </div>
             ) : (
@@ -469,7 +449,7 @@ const Dashboard = () => {
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex gap-2">
                         <span className="text-xs bg-purple-900/30 text-purple-300 px-2 py-1 rounded-full border border-purple-500/30">
-                          {getTypeLabel(conv.conversation_type)}
+                          {conv.user_handle || 'Unknown User'}
                         </span>
                         <span className="text-xs bg-pink-900/30 text-pink-300 px-2 py-1 rounded-full border border-pink-500/30">
                           {getGoalLabel(conv.goal)}
@@ -502,7 +482,7 @@ const Dashboard = () => {
                       </div>
                       
                       <div className="bg-purple-900/20 rounded-lg p-3 border-l-4 border-purple-500">
-                        <p className="text-sm text-purple-300 font-medium mb-1">Your Perfect Reply:</p>
+                        <p className="text-sm text-purple-300 font-medium mb-1">Your Money-Making Reply:</p>
                         <p className="text-white">{conv.ai_reply}</p>
                       </div>
                     </div>
@@ -520,7 +500,7 @@ const Dashboard = () => {
         {/* Help Section */}
         <div className="text-center mt-8 pt-8 border-t border-gray-800">
           <p className="text-gray-400 text-sm">
-            Need help? Contact support@instadm.pro
+            Need help making more money? Contact support@salesmachine.pro
           </p>
         </div>
       </div>

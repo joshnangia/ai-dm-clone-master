@@ -106,7 +106,7 @@ const InstaDMTool = () => {
               className="h-16 w-16 drop-shadow-lg"
             />
             <Link to="/" className="text-2xl md:text-3xl font-bold font-mono text-white drop-shadow-lg">
-              InstaReply.co
+              Sales Machine Pro
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-8">
@@ -129,13 +129,13 @@ const InstaDMTool = () => {
           {/* Header */}
           <div className="text-center mb-12 animate-fade-in">
             <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 font-mono drop-shadow-2xl">
-              Type a DM.{' '}
-              <span className="bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent animate-pulse">
-                Get a pro-level reply.
+              Turn DMs into{' '}
+              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-pulse">
+                Cold Hard Cash.
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-white/80 font-mono drop-shadow-lg">
-              Your personal AI Closer. Built for Instagram. Try it free once.
+              AI that analyzes your business and writes money-making replies. Try free.
             </p>
           </div>
 
@@ -145,10 +145,10 @@ const InstaDMTool = () => {
               {/* Input */}
               <div>
                 <Textarea
-                  placeholder="Paste your DM here"
+                  placeholder="Paste their DM here..."
                   value={dmText}
                   onChange={(e) => setDmText(e.target.value)}
-                  className="min-h-32 text-lg font-mono resize-none bg-white/20 backdrop-blur-sm border-2 border-white/30 focus:border-white/50 text-white placeholder:text-white/60 rounded-2xl"
+                  className="min-h-32 text-lg font-mono resize-none bg-black/60 backdrop-blur-sm border-2 border-purple-500/30 focus:border-purple-500/60 text-white placeholder:text-white/60 rounded-2xl"
                   disabled={isLoading}
                 />
               </div>
@@ -157,30 +157,30 @@ const InstaDMTool = () => {
               <Button
                 onClick={generateReply}
                 disabled={isLoading || !dmText.trim()}
-                className="w-full py-6 text-xl font-bold bg-gradient-to-r from-white/20 to-white/30 hover:from-white/30 hover:to-white/40 backdrop-blur-sm text-white border border-white/30 transition-all duration-300 transform hover:scale-105 rounded-2xl"
+                className="w-full py-6 text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 transition-all duration-300 transform hover:scale-105 rounded-2xl"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center space-x-2">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>Generating Reply...</span>
+                    <span>AI is Analyzing...</span>
                   </div>
                 ) : (
-                  'Generate Reply'
+                  'Generate Money-Making Reply'
                 )}
               </Button>
 
               {/* Generated Reply */}
               {generatedReply && (
-                <div className="mt-8 p-6 backdrop-blur-xl bg-white/20 rounded-2xl border border-white/30 transform animate-scale-in">
+                <div className="mt-8 p-6 backdrop-blur-xl bg-purple-900/20 rounded-2xl border border-purple-500/30 transform animate-scale-in">
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-lg font-bold text-white font-mono">
-                      Your AI Reply:
+                      Your Sales Reply:
                     </h3>
                     <Button
                       onClick={copyToClipboard}
                       variant="outline"
                       size="sm"
-                      className="font-mono bg-white/20 border-white/30 text-white hover:bg-white/30"
+                      className="font-mono bg-purple-600/30 border-purple-500/30 text-white hover:bg-purple-600/50"
                     >
                       Copy
                     </Button>
@@ -197,7 +197,7 @@ const InstaDMTool = () => {
           {!isPaid && (
             <div className="text-center mt-6 animate-fade-in">
               <p className="text-sm text-white/60 font-mono backdrop-blur-sm bg-white/10 rounded-full px-4 py-2 inline-block">
-                {hasUsedFreeTry ? 'Free try used. Upgrade for unlimited replies.' : 'One free try remaining.'}
+                {hasUsedFreeTry ? 'Free try used. Upgrade to start making money.' : 'One free money-making try remaining.'}
               </p>
             </div>
           )}
@@ -205,7 +205,7 @@ const InstaDMTool = () => {
           {isPaid && (
             <div className="text-center mt-6 animate-fade-in">
               <p className="text-sm text-green-400 font-mono backdrop-blur-sm bg-green-400/10 rounded-full px-4 py-2 inline-block">
-                ✨ Unlimited replies activated
+                ✨ Unlimited money-making replies activated
               </p>
             </div>
           )}
@@ -234,12 +234,12 @@ const InstaDMTool = () => {
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-4xl md:text-6xl font-bold font-mono text-white mb-8 drop-shadow-2xl">
             Powered by{' '}
-            <span className="bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent">
-              Advanced AI
+            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+              Sales Psychology AI
             </span>
           </h2>
           <p className="text-xl text-white/80 font-mono mb-12">
-            Every reply is crafted by cutting-edge AI trained on millions of successful conversations
+            Analyzes your business and creates replies that actually close deals and make money
           </p>
         </div>
       </div>
@@ -249,7 +249,7 @@ const InstaDMTool = () => {
         {/* Features Section */}
         <section className="text-center">
           <h2 className="text-3xl md:text-5xl font-bold font-mono text-white mb-12 drop-shadow-lg">
-            Why InstaReply.co Works
+            Why Sales Machine Pro Makes You Money
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="backdrop-blur-xl bg-white/10 p-8 rounded-3xl border border-white/20 transform hover:scale-105 transition-all duration-500 hover:bg-white/20">
@@ -257,10 +257,10 @@ const InstaDMTool = () => {
                 <span className="text-2xl">⚡</span>
               </div>
               <h3 className="text-xl font-bold font-mono text-white mb-4">
-                Instant Replies
+                Instant Sales Replies
               </h3>
               <p className="text-white/80 font-mono leading-relaxed">
-                Generate professional responses in seconds. Never leave anyone on read again.
+                AI analyzes your business and creates money-making responses in seconds.
               </p>
             </div>
             <div className="backdrop-blur-xl bg-white/10 p-8 rounded-3xl border border-white/20 transform hover:scale-105 transition-all duration-500 hover:bg-white/20">
@@ -268,10 +268,10 @@ const InstaDMTool = () => {
                 <span className="text-2xl">🎯</span>
               </div>
               <h3 className="text-xl font-bold font-mono text-white mb-4">
-                Conversion Focused
+                Business Psychology
               </h3>
               <p className="text-white/80 font-mono leading-relaxed">
-                Trained specifically for closing deals, making sales, and converting leads.
+                Understands what you sell and crafts replies that convert prospects into paying customers.
               </p>
             </div>
             <div className="backdrop-blur-xl bg-white/10 p-8 rounded-3xl border border-white/20 transform hover:scale-105 transition-all duration-500 hover:bg-white/20">
@@ -279,10 +279,10 @@ const InstaDMTool = () => {
                 <span className="text-2xl">📱</span>
               </div>
               <h3 className="text-xl font-bold font-mono text-white mb-4">
-                Mobile First
+                Money on Autopilot
               </h3>
               <p className="text-white/80 font-mono leading-relaxed">
-                Built for Instagram users. Works perfectly on your phone.
+                Turn every DM into a sales opportunity. Never miss a potential customer again.
               </p>
             </div>
           </div>
@@ -291,20 +291,20 @@ const InstaDMTool = () => {
         {/* Stats Section */}
         <section className="text-center backdrop-blur-xl bg-white/5 py-20 rounded-3xl border border-white/20">
           <h2 className="text-3xl md:text-5xl font-bold font-mono text-white mb-12 drop-shadow-lg">
-            The Numbers
+            Real Results That Pay
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="transform hover:scale-110 transition-all duration-300">
-              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">10x</div>
-              <div className="text-white/80 font-mono text-lg">Faster Responses</div>
+              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">3x</div>
+              <div className="text-white/80 font-mono text-lg">More Sales Closed</div>
             </div>
             <div className="transform hover:scale-110 transition-all duration-300">
-              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">85%</div>
-              <div className="text-white/80 font-mono text-lg">Higher Conversion Rate</div>
+              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">92%</div>
+              <div className="text-white/80 font-mono text-lg">Higher Revenue Per DM</div>
             </div>
             <div className="transform hover:scale-110 transition-all duration-300">
-              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">24/7</div>
-              <div className="text-white/80 font-mono text-lg">Always Available</div>
+              <div className="text-5xl md:text-7xl font-bold font-mono text-white drop-shadow-lg mb-2">$10K+</div>
+              <div className="text-white/80 font-mono text-lg">Extra Monthly Revenue</div>
             </div>
           </div>
         </section>
@@ -312,20 +312,20 @@ const InstaDMTool = () => {
         {/* Social Proof Section */}
         <section className="text-center">
           <h2 className="text-3xl md:text-5xl font-bold font-mono text-white mb-12 drop-shadow-lg">
-            What Users Say
+            Making Bank with AI
           </h2>
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="p-8 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl transform hover:scale-105 transition-all duration-500">
               <p className="text-white/90 font-mono mb-6 text-lg leading-relaxed">
-                "This saved me hours every day. My DM response rate went through the roof."
+                "Made $15K extra last month just from better DM replies. This AI gets my business."
               </p>
-              <div className="text-sm text-white/60 font-mono">— Sarah K., Entrepreneur</div>
+              <div className="text-sm text-white/60 font-mono">— Sarah K., Course Creator</div>
             </Card>
             <Card className="p-8 backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl transform hover:scale-105 transition-all duration-500">
               <p className="text-white/90 font-mono mb-6 text-lg leading-relaxed">
-                "Finally, a tool that actually understands how to close deals via DM."
+                "Closed 3 high-ticket clients this week using these AI replies. Game changer."
               </p>
-              <div className="text-sm text-white/60 font-mono">— Mike R., Sales Pro</div>
+              <div className="text-sm text-white/60 font-mono">— Mike R., Business Coach</div>
             </Card>
           </div>
         </section>
@@ -341,11 +341,11 @@ const InstaDMTool = () => {
               className="h-12 w-12 drop-shadow-lg"
             />
             <span className="text-2xl font-bold font-mono text-white drop-shadow-lg">
-              InstaReply.co
+              Sales Machine Pro
             </span>
           </div>
           <p className="text-white/60 font-mono text-sm">
-            AI-powered DM replies for modern entrepreneurs
+            AI that analyzes your business and turns DMs into cash
           </p>
         </div>
       </footer>
@@ -356,18 +356,18 @@ const InstaDMTool = () => {
           <Card className="w-full max-w-md p-8 backdrop-blur-xl bg-white/20 border border-white/30 rounded-3xl transform animate-scale-in">
             <div className="text-center space-y-6">
               <h2 className="text-2xl md:text-3xl font-bold text-white font-mono">
-                You just used your free try.
+                Ready to make money?
               </h2>
               <p className="text-white/80 font-mono leading-relaxed">
-                Unlock unlimited replies for just $9.99/month.
-                Start closing leads, sales, and conversations in seconds.
+                Unlock unlimited AI replies that actually close deals and generate revenue.
+                Start turning every DM into cash for just $9.99/month.
               </p>
               <div className="space-y-4">
                 <Button
                   onClick={handleUpgrade}
-                  className="w-full py-4 text-lg font-bold bg-gradient-to-r from-white/30 to-white/40 hover:from-white/40 hover:to-white/50 backdrop-blur-sm text-white border border-white/30 rounded-2xl transform hover:scale-105 transition-all duration-300"
+                  className="w-full py-4 text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 rounded-2xl transform hover:scale-105 transition-all duration-300"
                 >
-                  🚀 Unlock Now
+                  💰 Start Making Money - $9.99/mo
                 </Button>
                 <Button
                   onClick={() => setShowPaywall(false)}
