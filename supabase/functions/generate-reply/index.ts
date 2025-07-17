@@ -116,7 +116,16 @@ Keep responses concise (1-2 sentences max) and always maintain a fun, confident 
     const data = await response.json();
     const generatedReply = data.choices[0].message.content;
 
-    console.log('Generated reply successfully');
+    // Save conversation to database
+    await supabase
+      .from('conversations')
+      .insert({
+        user_id: user.id,
+        original_message: dmText,
+        ai_reply: generatedReply
+      });
+
+    console.log('Generated reply successfully and saved to database');
 
     return new Response(JSON.stringify({ reply: generatedReply }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

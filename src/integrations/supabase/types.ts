@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversations: {
+        Row: {
+          ai_reply: string
+          created_at: string
+          id: string
+          original_message: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          ai_reply: string
+          created_at?: string
+          id?: string
+          original_message: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          ai_reply?: string
+          created_at?: string
+          id?: string
+          original_message?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       creator_subscriptions: {
         Row: {
           active: boolean | null
