@@ -238,10 +238,6 @@ const Home = () => {
                   <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
                   <span className="text-lg">Call booking integration</span>
                 </div>
-                <div className="flex items-center">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full mr-3"></div>
-                  <span className="text-lg">30-day refund policy</span>
-                </div>
               </div>
               
               <Link to="/auth">
