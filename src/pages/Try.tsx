@@ -36,7 +36,13 @@ const Try = () => {
     let strategy = '';
 
     // BUSINESS INTENT DETECTION (highest priority)
-    if (lowerText.includes('reason') || lowerText.includes('why should') || lowerText.includes('convince me') || lowerText.includes('what makes') || lowerText.includes('tell me about') || lowerText.includes('give me')) {
+    // Sales comparison and competitive advantage questions
+    if (lowerText.includes('why you over competitors') || lowerText.includes('what makes you different') || lowerText.includes('how are you better than others') || lowerText.includes('why choose your company') || lowerText.includes('compare your offer to others') || lowerText.includes('why your business') || lowerText.includes('why should i go with you') || lowerText.includes('what makes you stand out')) {
+      messageType = 'Sales Comparison / Competitive Advantage';
+      tone = 'Evaluating & Comparing';
+      context = 'Seeking competitive differentiators and unique value';
+      strategy = 'Highlight unique advantages, proof points, and competitive edge';
+    } else if (lowerText.includes('reason') || lowerText.includes('why should') || lowerText.includes('convince me') || lowerText.includes('what makes') || lowerText.includes('tell me about') || lowerText.includes('give me')) {
       messageType = 'Sales Interest / Objection Response';
       tone = 'Curious & Evaluating';
       context = 'Asking for value proposition or reasons to buy';
@@ -93,8 +99,10 @@ const Try = () => {
       const lowerText = dmText.toLowerCase();
       let mockReply = '';
 
-      // PRIORITIZE BUSINESS QUESTIONS
-      if (lowerText.includes('reason') || lowerText.includes('why should') || lowerText.includes('convince me') || lowerText.includes('what makes') || (lowerText.includes('give me') && (lowerText.includes('reason') || lowerText.includes('why')))) {
+      // PRIORITIZE BUSINESS QUESTIONS - Check for competitive questions first
+      if (lowerText.includes('why you over competitors') || lowerText.includes('what makes you different') || lowerText.includes('how are you better than others') || lowerText.includes('why choose your company') || lowerText.includes('compare your offer to others') || lowerText.includes('why your business') || lowerText.includes('why should i go with you') || lowerText.includes('what makes you stand out')) {
+        mockReply = "Great question — here's what makes us stand out:\n\n• Higher conversion rates — turns DMs into actual sales, not just responses\n• Niche-specific training — built for your exact audience and industry\n• Proven results — used by top creators generating 6-7 figures from DMs\n• Lightning fast setup — get it running in under 10 minutes\n• Ongoing optimization — constantly improves based on your performance\n\nWant to see it in action for your goal?";
+      } else if (lowerText.includes('reason') || lowerText.includes('why should') || lowerText.includes('convince me') || lowerText.includes('what makes') || (lowerText.includes('give me') && (lowerText.includes('reason') || lowerText.includes('why')))) {
         mockReply = "Absolutely. Here's why:\n\n• Converts DMs into sales, not just replies\n• Trained for your exact audience and niche  \n• 24/7 auto-replies that feel human and persuasive\n• Used by top creators to close inbound DMs at scale\n• Backed by data, results, and real-world conversion boosts\n\nWant a quick preview of how it works for your course?";
       } else if (lowerText.includes('tell me about') && (lowerText.includes('course') || lowerText.includes('program') || lowerText.includes('business'))) {
         mockReply = "My course teaches Instagram DM conversion - turning cold messages into paying customers. I've helped 500+ students add $5-15k/month just from better DM strategies. The system works because it's based on psychology, not just templates. What's your current biggest challenge with DMs?";
