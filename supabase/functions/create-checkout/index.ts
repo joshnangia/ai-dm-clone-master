@@ -60,8 +60,8 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/auth`,
+      success_url: `https://instareply.co/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://instareply.co/auth`,
       metadata: {
         user_email: email,
       },
