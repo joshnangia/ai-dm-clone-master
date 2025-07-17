@@ -93,11 +93,11 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground dark">
       {/* Navigation */}
-      <nav className="p-6 border-b border-gray-800">
+      <nav className="p-6 border-b border-border">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-2xl font-black">
+          <Link to="/" className="flex items-center space-x-2 text-2xl font-black text-foreground hover:text-premium transition-colors">
             <ArrowLeft className="w-6 h-6" />
             <span>InstaReply.co</span>
           </Link>
@@ -106,78 +106,100 @@ const Auth = () => {
 
       <div className="max-w-md mx-auto px-6 py-12">
         {/* Payment-First Section */}
-        <Card className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-purple-500/30 mb-8">
-          <CardHeader className="text-center">
-            <Star className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
-            <CardTitle className="text-2xl">Get Instant Access</CardTitle>
-            <CardDescription className="text-gray-300">
+        <Card className="relative overflow-hidden border-0 mb-8 animate-scale-in" 
+              style={{ 
+                background: 'var(--gradient-premium-subtle)',
+                borderImage: 'var(--gradient-premium) 1',
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                boxShadow: 'var(--shadow-premium)'
+              }}>
+          <div className="absolute inset-0 opacity-20"
+               style={{ background: 'var(--gradient-premium)' }}></div>
+          <CardHeader className="relative text-center pb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto"
+                 style={{ 
+                   background: 'var(--gradient-premium)',
+                   boxShadow: 'var(--glow-premium)'
+                 }}>
+              <Star className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-premium to-premium-secondary bg-clip-text text-transparent">
+              Get Instant Access
+            </CardTitle>
+            <CardDescription className="text-muted-foreground text-lg mt-2">
               Pay $9.99/month → Account created instantly → Start using AI immediately
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="payment-email" className="text-white">Email</Label>
+          <CardContent className="relative space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="payment-email" className="text-foreground font-medium">Email Address</Label>
               <Input
                 id="payment-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-2 bg-black border-gray-700 text-white"
-                placeholder="Enter your email"
+                className="h-12 bg-background/50 backdrop-blur-sm border-border/50 focus:border-premium transition-all duration-300"
+                placeholder="Enter your email address"
               />
             </div>
+            
             <Button
               onClick={handlePayAndGetAccess}
               disabled={paymentLoading}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 font-bold"
+              className="w-full h-14 font-bold text-lg rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95"
+              style={{ 
+                background: 'var(--gradient-premium)',
+                boxShadow: 'var(--shadow-premium)'
+              }}
             >
               {paymentLoading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                  <span>Creating checkout...</span>
+                <div className="flex items-center space-x-3">
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                  <span>Creating secure checkout...</span>
                 </div>
               ) : (
-                <>
-                  <CreditCard className="w-5 h-5 mr-2" />
-                  Pay $9.99/mo - Get Instant Access
-                </>
+                <div className="flex items-center justify-center space-x-3">
+                  <CreditCard className="w-6 h-6" />
+                  <span>Pay $9.99/month - Get Instant Access</span>
+                </div>
               )}
             </Button>
             
-            <div className="grid grid-cols-3 gap-2 text-xs text-gray-400 pt-2">
-              <div className="flex items-center space-x-1">
-                <Zap className="w-3 h-3 text-purple-400" />
-                <span>Unlimited AI</span>
+            <div className="grid grid-cols-3 gap-4 pt-4">
+              <div className="flex flex-col items-center space-y-2 p-3 rounded-lg bg-background/30 backdrop-blur-sm">
+                <Zap className="w-5 h-5 text-premium" />
+                <span className="text-xs font-medium text-center text-muted-foreground">Unlimited AI Replies</span>
               </div>
-              <div className="flex items-center space-x-1">
-                <Star className="w-3 h-3 text-yellow-400" />
-                <span>Advanced Psychology</span>
+              <div className="flex flex-col items-center space-y-2 p-3 rounded-lg bg-background/30 backdrop-blur-sm">
+                <Star className="w-5 h-5 text-premium-secondary" />
+                <span className="text-xs font-medium text-center text-muted-foreground">Advanced Psychology</span>
               </div>
-              <div className="flex items-center space-x-1">
-                <Shield className="w-3 h-3 text-green-400" />
-                <span>Instant Setup</span>
+              <div className="flex flex-col items-center space-y-2 p-3 rounded-lg bg-background/30 backdrop-blur-sm">
+                <Shield className="w-5 h-5 text-premium-accent" />
+                <span className="text-xs font-medium text-center text-muted-foreground">Instant Setup</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Existing Users Sign In */}
-        <Card className="bg-gray-900 border-gray-800">
+        <Card className="bg-card border-border">
           <CardHeader className="text-center">
-            <CardTitle className="text-xl">Existing User?</CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardTitle className="text-xl text-card-foreground">Existing User?</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Sign in to your account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="signin-password" className="text-white">Password</Label>
+              <Label htmlFor="signin-password" className="text-foreground">Password</Label>
               <Input
                 id="signin-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-2 bg-black border-gray-700 text-white"
+                className="mt-2 bg-background border-border text-foreground"
                 placeholder="Enter your password"
               />
             </div>
@@ -185,7 +207,7 @@ const Auth = () => {
               onClick={handleSignIn}
               disabled={loading}
               variant="outline"
-              className="w-full border-gray-700"
+              className="w-full border-border hover:bg-accent"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
