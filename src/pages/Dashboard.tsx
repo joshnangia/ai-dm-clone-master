@@ -431,10 +431,11 @@ const Dashboard = () => {
                   </Button>
                   <Button
                     onClick={() => setGeneratedReply('')}
-                    variant="outline"
-                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-400 hover:text-gray-300 transition-colors"
                   >
-                    Dismiss
+                    ✕
                   </Button>
                 </div>
               </div>
