@@ -165,7 +165,7 @@ const Dashboard = () => {
           {/* Help */}
           <div className="text-center">
             <p className="text-gray-400 text-sm">
-              Need help? Email support@instacloser.ai
+              Need help? Email support@instareply.co
             </p>
           </div>
         </div>

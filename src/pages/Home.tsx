@@ -11,7 +11,7 @@ const Home = () => {
       <div className="px-4 py-8">
         {/* Logo with auth */}
         <div className="flex justify-between items-center mb-8">
-          <div className="text-2xl font-bold">InstaCloser.ai</div>
+          <div className="text-2xl font-bold">InstaReply.co</div>
           <div className="flex gap-2">
             {user ? (
               <div className="flex items-center gap-3">

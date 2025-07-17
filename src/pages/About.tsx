@@ -11,11 +11,11 @@ const About = () => {
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/25530eda-8a1d-468c-9929-0025e965b72e.png" 
-              alt="InstaCloser.ai Logo" 
+              alt="InstaReply.co Logo" 
               className="h-10 w-10"
             />
             <Link to="/" className="text-2xl font-bold font-mono text-gray-900 dark:text-white">
-              InstaCloser.ai
+              InstaReply.co
             </Link>
           </div>
           <div className="flex items-center space-x-6">
@@ -35,7 +35,7 @@ const About = () => {
       <div className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 font-mono">
-            About InstaCloser.ai
+            About InstaReply.co
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 font-mono">
             The future of DM communication
@@ -49,7 +49,7 @@ const About = () => {
             </h2>
             <p className="text-gray-600 dark:text-gray-300 font-mono leading-relaxed">
               We believe that every entrepreneur deserves the tools to communicate effectively. 
-              InstaCloser.ai was built to help you respond to DMs like a professional closer, 
+              InstaReply.co was built to help you respond to DMs like a professional closer, 
               even when you're busy building your business.
             </p>
           </Card>
@@ -70,7 +70,7 @@ const About = () => {
               The Technology
             </h2>
             <p className="text-gray-600 dark:text-gray-300 font-mono leading-relaxed">
-              Built on advanced AI models, InstaCloser.ai understands context, tone, and intent. 
+              Built on advanced AI models, InstaReply.co understands context, tone, and intent. 
               It generates replies that sound natural, professional, and conversion-focused. 
               Every response is designed to move your conversations forward.
             </p>

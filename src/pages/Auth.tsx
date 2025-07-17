@@ -118,10 +118,10 @@ const Auth = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <Link to="/" className="text-2xl font-black">
-            InstaCloser.ai
+            InstaReply.co
           </Link>
           <h1 className="text-3xl font-black mt-4 mb-2">
-            {isLogin ? 'Welcome Back' : 'Join InstaCloser'}
+            {isLogin ? 'Welcome Back' : 'Join InstaReply'}
           </h1>
           <p className="text-gray-300">
             {isLogin ? 'Sign in to access unlimited AI replies' : 'Create your account to get started'}

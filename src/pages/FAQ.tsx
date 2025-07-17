@@ -37,11 +37,11 @@ const FAQ = () => {
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/25530eda-8a1d-468c-9929-0025e965b72e.png" 
-              alt="InstaCloser.ai Logo" 
+              alt="InstaReply.co Logo" 
               className="h-12 w-12"
             />
             <Link to="/" className="text-xl font-bold text-black">
-              InstaCloser.ai
+              InstaReply.co
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-8">

@@ -16,11 +16,11 @@ const Unlock = () => {
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/25530eda-8a1d-468c-9929-0025e965b72e.png" 
-              alt="InstaCloser.ai Logo" 
+              alt="InstaReply.co Logo" 
               className="h-12 w-12"
             />
             <Link to="/" className="text-xl font-bold text-black">
-              InstaCloser.ai
+              InstaReply.co
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-8">
@@ -56,7 +56,7 @@ const Unlock = () => {
               <div className="flex items-start space-x-4">
                 <div className="w-2 h-2 bg-black rounded-full mt-3 flex-shrink-0"></div>
                 <p className="text-lg text-gray-700">
-                  Unlimited access to InstaCloser AI
+                  Unlimited access to InstaReply AI
                 </p>
               </div>
               <div className="flex items-start space-x-4">

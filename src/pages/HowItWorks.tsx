@@ -11,11 +11,11 @@ const HowItWorks = () => {
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/25530eda-8a1d-468c-9929-0025e965b72e.png" 
-              alt="InstaCloser.ai Logo" 
+              alt="InstaReply.co Logo" 
               className="h-10 w-10"
             />
             <Link to="/" className="text-2xl font-bold font-mono text-gray-900 dark:text-white">
-              InstaCloser.ai
+              InstaReply.co
             </Link>
           </div>
           <div className="flex items-center space-x-6">

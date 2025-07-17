@@ -32,8 +32,8 @@ const InstaDMTool = () => {
     setCodeLines(codes);
 
     // Check if user has used their free try
-    const usedFreeTry = localStorage.getItem('instacloser_used_free_try');
-    const paidStatus = localStorage.getItem('instacloser_paid_status');
+    const usedFreeTry = localStorage.getItem('instareply_used_free_try');
+    const paidStatus = localStorage.getItem('instareply_paid_status');
     
     if (usedFreeTry === 'true') {
       setHasUsedFreeTry(true);
@@ -64,7 +64,7 @@ const InstaDMTool = () => {
       
       // Mark free try as used if not paid
       if (!isPaid) {
-        localStorage.setItem('instacloser_used_free_try', 'true');
+        localStorage.setItem('instareply_used_free_try', 'true');
         setHasUsedFreeTry(true);
       }
     } catch (error) {
@@ -78,7 +78,7 @@ const InstaDMTool = () => {
     // TODO: Integrate with Stripe checkout via Supabase edge function
     console.log('Redirecting to Stripe checkout...');
     // For now, simulate successful payment
-    localStorage.setItem('instacloser_paid_status', 'true');
+    localStorage.setItem('instareply_paid_status', 'true');
     setIsPaid(true);
     setShowPaywall(false);
   };
@@ -102,11 +102,11 @@ const InstaDMTool = () => {
           <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/25530eda-8a1d-468c-9929-0025e965b72e.png" 
-              alt="InstaCloser.ai Logo" 
+              alt="InstaReply.co Logo" 
               className="h-16 w-16 drop-shadow-lg"
             />
             <Link to="/" className="text-2xl md:text-3xl font-bold font-mono text-white drop-shadow-lg">
-              InstaCloser.ai
+              InstaReply.co
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-8">
@@ -249,7 +249,7 @@ const InstaDMTool = () => {
         {/* Features Section */}
         <section className="text-center">
           <h2 className="text-3xl md:text-5xl font-bold font-mono text-white mb-12 drop-shadow-lg">
-            Why InstaCloser.ai Works
+            Why InstaReply.co Works
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="backdrop-blur-xl bg-white/10 p-8 rounded-3xl border border-white/20 transform hover:scale-105 transition-all duration-500 hover:bg-white/20">
@@ -337,11 +337,11 @@ const InstaDMTool = () => {
           <div className="flex items-center justify-center space-x-4 mb-6">
             <img 
               src="/lovable-uploads/25530eda-8a1d-468c-9929-0025e965b72e.png" 
-              alt="InstaCloser.ai Logo" 
+              alt="InstaReply.co Logo" 
               className="h-12 w-12 drop-shadow-lg"
             />
             <span className="text-2xl font-bold font-mono text-white drop-shadow-lg">
-              InstaCloser.ai
+              InstaReply.co
             </span>
           </div>
           <p className="text-white/60 font-mono text-sm">
