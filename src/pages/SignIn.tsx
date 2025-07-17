@@ -137,12 +137,6 @@ const SignIn = () => {
                   Sign up here
                 </Link>
               </p>
-              
-              <div className="border-t border-gray-800 pt-4">
-                <p className="text-sm text-gray-500">
-                  Default password for all accounts: <code className="text-purple-400">InstaReply2024!</code>
-                </p>
-              </div>
             </div>
           </CardContent>
         </Card>

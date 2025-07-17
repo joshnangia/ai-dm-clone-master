@@ -14,7 +14,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [step, setStep] = useState<'signup' | 'preview' | 'signin'>('signup');
+  const [step, setStep] = useState<'signup' | 'preview'>('signup');
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -44,10 +44,7 @@ const Auth = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            email_confirm: false // Skip email verification
-          }
+          emailRedirectTo: `${window.location.origin}/`
         }
       });
 
@@ -60,9 +57,10 @@ const Auth = () => {
       } else {
         toast({
           title: "Account created!",
-          description: "Welcome to InstaReply! No verification needed.",
+          description: "Please check your email to verify your account, then sign in.",
         });
-        setStep('preview');
+        // Don't go to preview step - user needs to verify email first
+        navigate('/signin');
       }
     } catch (error: any) {
       toast({
@@ -75,40 +73,6 @@ const Auth = () => {
     }
   };
 
-  const handleSignIn = async () => {
-    if (!email || !password) {
-      toast({
-        title: "Missing information",
-        description: "Please provide both email and password.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast({
-          title: "Error signing in",
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error signing in",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleUpgrade = async () => {
     setPaymentLoading(true);
@@ -287,37 +251,62 @@ const Auth = () => {
       </nav>
 
       <div className="max-w-md mx-auto px-6 py-16 font-inter">
-        {step === 'signin' ? (
-          /* Sign In Form */
-          <Card className="bg-card border-border">
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-bold text-card-foreground">Welcome Back</CardTitle>
-              <CardDescription className="text-muted-foreground text-lg">
-                Sign in to your InstaReply account
+        {/* Sign Up Form Only */}
+        <div className="relative">
+          {/* Subtle glow effect */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-premium via-premium-secondary to-premium opacity-20 rounded-3xl blur-sm"></div>
+          
+          <Card className="relative bg-card/95 backdrop-blur-xl border-0 rounded-3xl shadow-2xl overflow-hidden">
+            {/* Header Section */}
+            <CardHeader className="text-center pt-12 pb-8 px-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 mx-auto"
+                   style={{ background: 'linear-gradient(135deg, #8B5CF6, #EC4899)' }}>
+                <Star className="w-8 h-8 text-white" />
+              </div>
+              
+              <CardTitle className="text-3xl font-bold text-foreground mb-3 tracking-tight">
+                Create Your Account
+              </CardTitle>
+              <CardDescription className="text-lg text-muted-foreground font-medium">
+                Start converting leads with AI
               </CardDescription>
+              
+              {/* Social proof */}
+              <div className="flex items-center justify-center mt-6 space-x-1">
+                <div className="flex -space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600"></div>
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-green-600"></div>
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-purple-600"></div>
+                </div>
+                <span className="text-sm text-muted-foreground ml-3">Trusted by 12,000+ users</span>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-6">
+            
+            <CardContent className="px-8 pb-12 space-y-6">
+              {/* Email Input */}
               <div>
-                <Label htmlFor="email" className="text-foreground">Email</Label>
+                <Label htmlFor="signup-email" className="text-foreground">Email</Label>
                 <Input
-                  id="email"
+                  id="signup-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mt-2 h-12 bg-background border-border text-foreground"
-                  placeholder="Enter your email"
+                  className="mt-2 h-14 text-lg bg-background/50 border-2 border-border/50 focus:border-premium rounded-xl transition-all duration-300 placeholder:text-muted-foreground/60"
+                  placeholder="Enter your email address"
                 />
               </div>
+              
+              {/* Password Input */}
               <div>
-                <Label htmlFor="password" className="text-foreground">Password</Label>
+                <Label htmlFor="signup-password" className="text-foreground">Password</Label>
                 <div className="relative">
                   <Input
-                    id="password"
+                    id="signup-password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="mt-2 h-12 bg-background border-border text-foreground pr-12"
-                    placeholder="Enter your password"
+                    className="mt-2 h-14 text-lg bg-background/50 border-2 border-border/50 focus:border-premium rounded-xl transition-all duration-300 placeholder:text-muted-foreground/60 pr-12"
+                    placeholder="Create a secure password"
                   />
                   <button
                     type="button"
@@ -328,155 +317,67 @@ const Auth = () => {
                   </button>
                 </div>
               </div>
+              
+              {/* Create Account Button */}
               <Button
-                onClick={handleSignIn}
+                onClick={handleSignUp}
                 disabled={loading}
-                className="w-full h-12 bg-premium hover:bg-premium/90"
+                className="w-full h-16 text-xl font-bold rounded-2xl mb-6 relative overflow-hidden group transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl hover:shadow-2xl"
+                style={{ 
+                  background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #8B5CF6 100%)',
+                  backgroundSize: '200% 200%',
+                  animation: 'gradient-shift 3s ease infinite'
+                }}
               >
-                {loading ? <Loader2 className="mr-2 w-4 h-4 animate-spin" /> : null}
-                {loading ? 'Signing in...' : 'Sign In'}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                {loading ? (
+                  <div className="relative z-10 flex items-center justify-center space-x-3">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Creating account...</span>
+                  </div>
+                ) : (
+                  <div className="relative z-10 flex items-center justify-center space-x-3">
+                    <span>Create Free Account</span>
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  </div>
+                )}
               </Button>
+              
+              {/* Trust badges */}
+              <div className="text-center space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  ✓ Free account ✓ Try AI for free ✓ Upgrade anytime
+                </p>
+                
+                {/* Features */}
+                <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-border/50">
+                  <div className="text-center">
+                    <Zap className="w-5 h-5 mx-auto mb-2 text-premium" />
+                    <p className="text-xs font-medium text-muted-foreground">Instant<br />Setup</p>
+                  </div>
+                  <div className="text-center">
+                    <Star className="w-5 h-5 mx-auto mb-2 text-premium-secondary" />
+                    <p className="text-xs font-medium text-muted-foreground">AI<br />Preview</p>
+                  </div>
+                  <div className="text-center">
+                    <Shield className="w-5 h-5 mx-auto mb-2 text-premium-accent" />
+                    <p className="text-xs font-medium text-muted-foreground">Secure<br />& Private</p>
+                  </div>
+                </div>
+              </div>
               
               <div className="text-center">
                 <Button 
-                  onClick={() => setStep('signup')} 
+                  onClick={() => navigate('/signin')} 
                   variant="ghost" 
                   className="text-premium hover:text-premium/80"
                 >
-                  Don't have an account? Sign up
+                  Already have an account? Sign in
                 </Button>
               </div>
             </CardContent>
           </Card>
-        ) : (
-          /* Sign Up Form */
-          <div className="relative">
-            {/* Subtle glow effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-premium via-premium-secondary to-premium opacity-20 rounded-3xl blur-sm"></div>
-            
-            <Card className="relative bg-card/95 backdrop-blur-xl border-0 rounded-3xl shadow-2xl overflow-hidden">
-              {/* Header Section */}
-              <CardHeader className="text-center pt-12 pb-8 px-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 mx-auto"
-                     style={{ background: 'linear-gradient(135deg, #8B5CF6, #EC4899)' }}>
-                  <Star className="w-8 h-8 text-white" />
-                </div>
-                
-                <CardTitle className="text-3xl font-bold text-foreground mb-3 tracking-tight">
-                  Create Your Account
-                </CardTitle>
-                <CardDescription className="text-lg text-muted-foreground font-medium">
-                  Start converting leads with AI
-                </CardDescription>
-                
-                {/* Social proof */}
-                <div className="flex items-center justify-center mt-6 space-x-1">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-blue-600"></div>
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-green-600"></div>
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-purple-600"></div>
-                  </div>
-                  <span className="text-sm text-muted-foreground ml-3">Trusted by 12,000+ users</span>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="px-8 pb-12 space-y-6">
-                {/* Email Input */}
-                <div>
-                  <Label htmlFor="signup-email" className="text-foreground">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="mt-2 h-14 text-lg bg-background/50 border-2 border-border/50 focus:border-premium rounded-xl transition-all duration-300 placeholder:text-muted-foreground/60"
-                    placeholder="Enter your email address"
-                  />
-                </div>
-                
-                {/* Password Input */}
-                <div>
-                  <Label htmlFor="signup-password" className="text-foreground">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="signup-password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="mt-2 h-14 text-lg bg-background/50 border-2 border-border/50 focus:border-premium rounded-xl transition-all duration-300 placeholder:text-muted-foreground/60 pr-12"
-                      placeholder="Create a secure password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Create Account Button */}
-                <Button
-                  onClick={handleSignUp}
-                  disabled={loading}
-                  className="w-full h-16 text-xl font-bold rounded-2xl mb-6 relative overflow-hidden group transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-xl hover:shadow-2xl"
-                  style={{ 
-                    background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #8B5CF6 100%)',
-                    backgroundSize: '200% 200%',
-                    animation: 'gradient-shift 3s ease infinite'
-                  }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                  {loading ? (
-                    <div className="relative z-10 flex items-center justify-center space-x-3">
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Creating account...</span>
-                    </div>
-                  ) : (
-                    <div className="relative z-10 flex items-center justify-center space-x-3">
-                      <span>Create Free Account</span>
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    </div>
-                  )}
-                </Button>
-                
-                {/* Trust badges */}
-                <div className="text-center space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    ✓ Free account ✓ See demo dashboard ✓ Upgrade anytime
-                  </p>
-                  
-                  {/* Features */}
-                  <div className="grid grid-cols-3 gap-3 mt-6 pt-6 border-t border-border/50">
-                    <div className="text-center">
-                      <Zap className="w-5 h-5 mx-auto mb-2 text-premium" />
-                      <p className="text-xs font-medium text-muted-foreground">Instant<br />Setup</p>
-                    </div>
-                    <div className="text-center">
-                      <Star className="w-5 h-5 mx-auto mb-2 text-premium-secondary" />
-                      <p className="text-xs font-medium text-muted-foreground">AI<br />Preview</p>
-                    </div>
-                    <div className="text-center">
-                      <Shield className="w-5 h-5 mx-auto mb-2 text-premium-accent" />
-                      <p className="text-xs font-medium text-muted-foreground">Secure<br />& Private</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <Button 
-                    onClick={() => setStep('signin')} 
-                    variant="ghost" 
-                    className="text-premium hover:text-premium/80"
-                  >
-                    Already have an account? Sign in
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

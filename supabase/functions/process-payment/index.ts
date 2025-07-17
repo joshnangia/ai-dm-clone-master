@@ -30,8 +30,6 @@ serve(async (req) => {
       throw new Error("Session ID is required");
     }
 
-    logStep("Session ID received", { sessionId });
-
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
       logStep("ERROR: No Stripe secret key found");
@@ -43,7 +41,6 @@ serve(async (req) => {
     });
 
     logStep("Retrieving Stripe session");
-    // Get checkout session
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     logStep("Stripe session retrieved", { 
       payment_status: session.payment_status,
@@ -74,61 +71,48 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Create user account with default password
-    const defaultPassword = "InstaReply2024!"; // Simple default password for all users
+    // Find existing user by email - users must sign up first
+    const { data: existingUsers } = await supabase.auth.admin.listUsers();
+    const existingUser = existingUsers.users.find(u => u.email === email);
     
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-      email,
-      password: defaultPassword,
-      email_confirm: true, // Skip email verification
-      user_metadata: {
-        payment_verified: true,
-        stripe_customer_id: session.customer,
-        subscription_id: session.subscription,
-        default_password: true
-      }
-    });
-
-    let userId = authData?.user?.id;
-
-    if (authError) {
-      console.error("Auth error:", authError);
-      // If user already exists, get their ID and update subscription
-      if (authError.message.includes("already registered")) {
-        const { data: existingUsers } = await supabase.auth.admin.listUsers();
-        const existingUser = existingUsers.users.find(u => u.email === email);
-        userId = existingUser?.id;
-        console.log("User already exists, updating subscription for:", email);
-      } else {
-        throw authError;
-      }
+    if (!existingUser) {
+      logStep("ERROR: No existing user found", { email });
+      throw new Error(`No account found for ${email}. Please create a free account first, then upgrade to premium.`);
     }
 
-    // Update subscribers table
-    await supabase.from("subscribers").upsert({
+    logStep("Found existing user", { userId: existingUser.id, email });
+
+    // Update subscribers table to mark as premium
+    const { error: upsertError } = await supabase.from("subscribers").upsert({
       email,
-      user_id: userId,
+      user_id: existingUser.id,
       stripe_customer_id: session.customer,
       subscribed: true,
       subscription_tier: "premium",
-      subscription_end: null, // Active subscription
+      subscription_end: null,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'email' });
 
-    console.log("User account processed successfully for:", email);
+    if (upsertError) {
+      logStep("ERROR: Failed to update subscription", { error: upsertError.message });
+      throw new Error(`Failed to update subscription: ${upsertError.message}`);
+    }
+
+    logStep("Subscription updated successfully", { userId: existingUser.id });
 
     return new Response(JSON.stringify({ 
       success: true, 
       email,
-      userId: userId,
-      defaultPassword: defaultPassword
+      userId: existingUser.id,
+      message: "Your account has been upgraded to premium!"
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error("Error processing payment:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logStep("ERROR", { message: errorMessage });
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

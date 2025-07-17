@@ -26,14 +26,18 @@ const Success = () => {
 
   const processPayment = async (sessionId: string) => {
     try {
-      // Simple success - no account creation, just show success
-      setProcessing(false);
+      const { data, error } = await supabase.functions.invoke('process-payment', {
+        body: { sessionId }
+      });
+
+      if (error) throw error;
+
+      setUserEmail(data.email);
       setAccountCreated(true);
-      setUserEmail("Your email");
       
       toast({
         title: "Payment successful!",
-        description: "Your subscription is active! You can now sign in.",
+        description: data.message || "Your account has been upgraded to premium!",
       });
 
     } catch (error: any) {
@@ -72,7 +76,7 @@ const Success = () => {
           <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-4">
             <h3 className="font-semibold text-purple-400 mb-2">✨ Payment Successful!</h3>
             <p className="text-sm text-gray-300">
-              Your subscription is now active. You can sign in with any email and the default password: <strong className="text-white">InstaReply2024!</strong>
+              Your account has been upgraded to premium! Sign in with your existing email and password to access all premium features.
             </p>
           </div>
 
