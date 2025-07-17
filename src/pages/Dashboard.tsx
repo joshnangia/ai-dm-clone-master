@@ -12,14 +12,21 @@ import {
   Copy, 
   Check, 
   Trash2,
-  Search,
   Plus,
   DollarSign,
   Target,
   TrendingUp,
   Zap,
   MessageCircle,
-  Crown
+  Crown,
+  Settings,
+  Download,
+  History,
+  BarChart3,
+  Users,
+  Briefcase,
+  Save,
+  Search
 } from 'lucide-react';
 
 interface Conversation {
@@ -31,6 +38,13 @@ interface Conversation {
   created_at: string;
 }
 
+interface UserProfile {
+  instagram_handle?: string;
+  bio?: string;
+  saved_handles: string[];
+  preferred_goals: string[];
+}
+
 const SALES_GOALS = [
   { value: 'sell_course', label: 'Sell My Course' },
   { value: 'sell_product', label: 'Sell My Product' },
@@ -40,7 +54,8 @@ const SALES_GOALS = [
   { value: 'build_interest', label: 'Build Interest' },
   { value: 'close_deal', label: 'Close the Deal' },
   { value: 'upsell', label: 'Upsell/Cross-sell' },
-  { value: 'convert_lead', label: 'Convert to Lead' }
+  { value: 'convert_lead', label: 'Convert to Lead' },
+  { value: 'custom', label: 'Custom Goal' }
 ];
 
 
@@ -51,15 +66,21 @@ const Dashboard = () => {
   const [newDmText, setNewDmText] = useState('');
   const [userHandle, setUserHandle] = useState('');
   const [goal, setGoal] = useState('');
+  const [customGoal, setCustomGoal] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewReply, setShowNewReply] = useState(false);
   const [generatedReply, setGeneratedReply] = useState<string>('');
+  const [userProfile, setUserProfile] = useState<UserProfile>({ saved_handles: [], preferred_goals: [] });
+  const [showSettings, setShowSettings] = useState(false);
+  const [instagramHandle, setInstagramHandle] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
     if (subscribed && user) {
       loadConversations();
+      loadUserProfile();
     }
   }, [subscribed, user]);
 
@@ -109,16 +130,83 @@ const Dashboard = () => {
     }
   };
 
+  const loadUserProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user?.id)
+        .single();
+
+      if (!error && data) {
+        const socialLinks = data.social_links as any;
+        const perks = data.perks as any;
+        
+        setUserProfile({
+          instagram_handle: data.username || '',
+          bio: data.bio || '',
+          saved_handles: socialLinks?.saved_handles || [],
+          preferred_goals: perks?.preferred_goals || []
+        });
+        setInstagramHandle(data.username || '');
+        if (socialLinks?.saved_handles?.length > 0) {
+          setUserHandle(socialLinks.saved_handles[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
+
+  const saveUserProfile = async () => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user?.id,
+          username: instagramHandle,
+          social_links: { 
+            saved_handles: userProfile.saved_handles.includes(userHandle) 
+              ? userProfile.saved_handles 
+              : [...userProfile.saved_handles, userHandle]
+          },
+          perks: { 
+            preferred_goals: [...userProfile.preferred_goals, goal].filter(Boolean)
+          }
+        });
+
+      if (!error) {
+        toast({
+          title: "Profile saved!",
+          description: "Your preferences have been updated.",
+        });
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    }
+  };
+
   const generateNewReply = async () => {
-    if (!newDmText.trim() || !session || !userHandle || !goal) return;
+    const finalGoal = goal === 'custom' ? customGoal : getGoalLabel(goal);
+    
+    if (!newDmText.trim() || !session || !userHandle || !finalGoal) return;
 
     setIsGenerating(true);
+    setIsAnalyzing(true);
+    
     try {
+      // Save current inputs to profile
+      await saveUserProfile();
+
+      // Simulate analysis for better UX
+      setTimeout(() => setIsAnalyzing(false), 2000);
+
       const { data, error } = await supabase.functions.invoke('generate-reply', {
         body: { 
           dmText: newDmText,
           userHandle,
-          goal
+          goal: finalGoal,
+          instagramHandle: instagramHandle || userHandle
         },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -130,12 +218,10 @@ const Dashboard = () => {
       if (data?.reply) {
         setGeneratedReply(data.reply);
         toast({
-          title: "Sales reply generated!",
-          description: "Your money-making response is ready.",
+          title: "AI reply generated!",
+          description: "Your high-converting response is ready.",
         });
         setNewDmText('');
-        setUserHandle('');
-        setGoal('');
         setShowNewReply(false);
         loadConversations();
       }
@@ -148,6 +234,7 @@ const Dashboard = () => {
       });
     } finally {
       setIsGenerating(false);
+      setIsAnalyzing(false);
     }
   };
 
@@ -416,12 +503,54 @@ const Dashboard = () => {
       </div>
 
       <div className="px-6 py-8 max-w-7xl mx-auto">
-        {/* Enhanced Hero Section */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center gap-2 bg-purple-600/10 border border-purple-500/30 rounded-full px-4 py-2 mb-6">
+        {/* Enhanced Header with Settings */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="inline-flex items-center gap-2 bg-purple-600/10 border border-purple-500/30 rounded-full px-4 py-2">
             <Zap className="w-4 h-4 text-purple-400" />
             <span className="text-sm text-purple-300">Sales Machine Pro Dashboard</span>
           </div>
+          <Button
+            onClick={() => setShowSettings(!showSettings)}
+            variant="ghost"
+            size="sm"
+            className="text-gray-400 hover:text-white hover:bg-gray-800/50"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Settings
+          </Button>
+        </div>
+
+        {/* Settings Panel */}
+        {showSettings && (
+          <div className="bg-gradient-to-br from-gray-900/50 to-gray-800/30 border border-gray-700/50 backdrop-blur-sm rounded-2xl p-6 mb-8">
+            <h3 className="text-xl font-bold text-white mb-4">⚙️ Account Settings</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-white">Instagram Handle</label>
+                <input
+                  type="text"
+                  placeholder="@yourhandle"
+                  value={instagramHandle}
+                  onChange={(e) => setInstagramHandle(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 text-white placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500/50"
+                />
+                <p className="text-xs text-gray-400 mt-1">AI learns from your Instagram style</p>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-white">Quick Actions</label>
+                <div className="flex gap-2">
+                  <Button onClick={saveUserProfile} className="bg-purple-600 hover:bg-purple-700">
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Profile
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Enhanced Hero Section */}
+        <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
             Turn DMs Into Revenue
           </h1>
@@ -450,10 +579,10 @@ const Dashboard = () => {
           
           <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
             <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-6 h-6 text-white" />
+              <BarChart3 className="w-6 h-6 text-white" />
             </div>
-            <div className="text-3xl font-bold text-white mb-1">9</div>
-            <p className="text-sm text-purple-300">Psychology Frameworks</p>
+            <div className="text-3xl font-bold text-white mb-1">{userProfile.saved_handles.length}</div>
+            <p className="text-sm text-purple-300">Saved Handles</p>
           </div>
           
           <div className="bg-gradient-to-br from-pink-900/30 to-pink-800/20 border border-pink-500/30 rounded-2xl p-6 text-center hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20">
@@ -492,14 +621,32 @@ const Dashboard = () => {
                       <label className="block text-sm font-semibold mb-3 text-white">
                         Your Business/Handle
                       </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. @fitnessguru, Course Creator, SaaS Founder"
-                        value={userHandle}
-                        onChange={(e) => setUserHandle(e.target.value)}
-                        className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 text-white placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
-                        disabled={isGenerating}
-                      />
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="e.g. @fitnessguru, Course Creator, SaaS Founder"
+                          value={userHandle}
+                          onChange={(e) => setUserHandle(e.target.value)}
+                          className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 text-white placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300"
+                          disabled={isGenerating}
+                        />
+                        {userProfile.saved_handles.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-xs text-gray-400 mb-2">Quick select:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {userProfile.saved_handles.map((handle, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => setUserHandle(handle)}
+                                  className="px-3 py-1 bg-purple-600/20 text-purple-300 rounded-lg text-xs hover:bg-purple-600/30 transition-colors"
+                                >
+                                  {handle}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     <div>
@@ -518,6 +665,17 @@ const Dashboard = () => {
                           ))}
                         </SelectContent>
                       </Select>
+                      
+                      {goal === 'custom' && (
+                        <input
+                          type="text"
+                          placeholder="Type your custom sales goal..."
+                          value={customGoal}
+                          onChange={(e) => setCustomGoal(e.target.value)}
+                          className="w-full mt-3 px-4 py-3 bg-gray-800/50 border border-gray-600/50 text-white placeholder:text-gray-400 rounded-xl focus:ring-2 focus:ring-purple-500/50"
+                          disabled={isGenerating}
+                        />
+                      )}
                     </div>
                   </div>
 
@@ -534,21 +692,45 @@ const Dashboard = () => {
                     />
                   </div>
 
+                  {/* Analysis Preview */}
+                  {isAnalyzing && (
+                    <div className="bg-purple-900/20 border border-purple-500/30 rounded-xl p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-purple-300 font-medium">AI analyzing message psychology...</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        <div className="bg-gray-800/50 rounded-lg p-3">
+                          <span className="text-gray-400">Intent Detection</span>
+                          <div className="text-purple-400 font-medium">Scanning...</div>
+                        </div>
+                        <div className="bg-gray-800/50 rounded-lg p-3">
+                          <span className="text-gray-400">Emotional Tone</span>
+                          <div className="text-pink-400 font-medium">Analyzing...</div>
+                        </div>
+                        <div className="bg-gray-800/50 rounded-lg p-3">
+                          <span className="text-gray-400">Best Strategy</span>
+                          <div className="text-green-400 font-medium">Optimizing...</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex gap-4">
                     <Button
                       onClick={generateNewReply}
-                      disabled={isGenerating || !newDmText.trim() || !userHandle || !goal}
+                      disabled={isGenerating || !newDmText.trim() || !userHandle || (!goal || (goal === 'custom' && !customGoal))}
                       className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 text-lg rounded-xl transition-all duration-300 hover:scale-105 shadow-lg"
                     >
                       {isGenerating ? (
                         <>
                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                          Generating Money-Making Reply...
+                          Generating High-Converting Reply...
                         </>
                       ) : (
                         <>
                           <Zap className="w-5 h-5 mr-2" />
-                          Generate High-Converting Reply
+                          Generate Money-Making Reply
                         </>
                       )}
                     </Button>
