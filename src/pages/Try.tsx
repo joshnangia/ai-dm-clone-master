@@ -1,285 +1,266 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Check } from 'lucide-react';
+import { ArrowLeft, Copy, Zap, Star, Crown } from 'lucide-react';
+
+const SALES_GOALS = [
+  { value: 'sell_course', label: 'Sell My Course' },
+  { value: 'sell_product', label: 'Sell My Product' },
+  { value: 'book_call', label: 'Book a Sales Call' },
+  { value: 'get_number', label: 'Get Their Number' },
+  { value: 'schedule_demo', label: 'Schedule a Demo' },
+  { value: 'build_interest', label: 'Build Interest' },
+  { value: 'close_deal', label: 'Close the Deal' },
+  { value: 'upsell', label: 'Upsell/Cross-sell' },
+  { value: 'convert_lead', label: 'Convert to Lead' }
+];
 
 const Try = () => {
-  const [dmText, setDmText] = useState('');
-  const [generatedReply, setGeneratedReply] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasUsedOnce, setHasUsedOnce] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const { user, session, subscribed, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
   const { toast } = useToast();
+  const [dmText, setDmText] = useState('');
+  const [userHandle, setUserHandle] = useState('');
+  const [goal, setGoal] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedReply, setGeneratedReply] = useState('');
+  const [hasUsedFreeReply, setHasUsedFreeReply] = useState(false);
 
-  useEffect(() => {
-    const used = localStorage.getItem('usedOnce');
-    if (used === 'true') {
-      setHasUsedOnce(true);
-    }
-  }, []);
+  const generateFreeReply = async () => {
+    if (!dmText.trim() || !userHandle || !goal) return;
 
-  const generateReply = async () => {
-    if (!dmText.trim()) return;
-
-    // If user is not logged in, redirect to auth
-    if (!user) {
-      toast({
-        title: "Login required",
-        description: "Please sign in to use the AI reply generator.",
-      });
-      navigate('/auth');
-      return;
-    }
-
-    // If user has already used free try and is not subscribed, show paywall
-    if (hasUsedOnce && !subscribed) {
-      setGeneratedReply("PAYWALL");
-      return;
-    }
-
-    // If user is logged in but not subscribed and hasn't used free try, allow 1 free generation
-    if (!subscribed && !hasUsedOnce) {
-      // Mark as used after this generation
-      localStorage.setItem('usedOnce', 'true');
-      setHasUsedOnce(true);
-    }
-
-    setIsLoading(true);
-    
+    setIsGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-reply', {
-        body: { dmText },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
+      // Simulate AI generation with a crafted response based on goal
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API delay
+      
+      const sampleReplies = {
+        sell_course: `Hey! I totally get where you're coming from. I actually just helped 3 students this week achieve similar results with my proven system. Quick question - are you serious about making this change or just browsing? If you're ready, I have 2 spots left this month.`,
+        sell_product: `I hear you! This is exactly why I created this solution. I've seen hundreds of people struggle with this same issue. Quick question - when you say you're interested, are you looking to solve this in the next 30 days or just exploring options?`,
+        book_call: `That's a great question! I'd love to give you a personalized answer because everyone's situation is unique. I have 3 slots open this week for a quick 15-min strategy call. Are you free Tuesday or Wednesday?`,
+        get_number: `Absolutely! This is actually something I'm passionate about helping with. There's so much to share - way too much for DMs. What's the best number to reach you? I'll shoot you a quick text with some exclusive insights.`,
+        schedule_demo: `Perfect timing! I'm actually doing personalized demos this week to show exactly how this works for your specific situation. I only have 2 slots left - are you free Thursday at 2pm or Friday at 10am?`,
+        build_interest: `I love that you're asking about this! Most people don't even realize this opportunity exists. Without giving away all my secrets here - are you someone who takes action when you see something that works?`,
+        close_deal: `You know what? I can tell you're serious about this. Since you've been following along and asking great questions, I want to make this a no-brainer for you. Are you ready to get started today?`,
+        upsell: `Since you're already seeing results with what you have, you're going to love this next level. I'm only offering this to my best customers - and since you're getting such great results, you're exactly who this is for. Interested?`,
+        convert_lead: `I can see you're really thinking about this seriously. Here's what I know - the people who succeed with this are the ones who decide quickly and take action. Are you ready to be one of those success stories?`
+      };
+      
+      const reply = sampleReplies[goal as keyof typeof sampleReplies] || 
+        `Thanks for reaching out! I can definitely help you with this. When you say you're interested, are you looking to move forward this week or just gathering information? I want to make sure I give you exactly what you need.`;
+      
+      setGeneratedReply(reply);
+      setHasUsedFreeReply(true);
+      
+      toast({
+        title: "Free reply generated!",
+        description: "Want unlimited replies? Upgrade to Pro!",
       });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data?.reply) {
-        setGeneratedReply(data.reply);
-        toast({
-          title: "Reply generated!",
-          description: "Your perfect reply is ready to copy.",
-        });
-      } else {
-        throw new Error('No reply generated');
-      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error generating free reply:', error);
       toast({
         title: "Error",
         description: "Failed to generate reply. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsGenerating(false);
     }
   };
 
-  const handleStripeCheckout = () => {
-    window.open('https://buy.stripe.com/test_6oU9AU6QO0sY9Qn6HKdAk07', '_blank');
+  const copyToClipboard = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied!",
+      description: "Your sales reply is ready to send.",
+    });
   };
-
-  const copyToClipboard = async () => {
-    if (generatedReply && generatedReply !== "PAYWALL") {
-      await navigator.clipboard.writeText(generatedReply);
-      setCopied(true);
-      toast({
-        title: "Copied!",
-        description: "Reply copied to clipboard.",
-      });
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  // Show loading while checking auth
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  // Used state - show upgrade
-  if (hasUsedOnce && !generatedReply) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4">
-        <div className="max-w-md mx-auto text-center">
-          <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <Copy className="w-8 h-8 text-muted-foreground" />
-          </div>
-          <h1 className="text-3xl font-bold mb-6">
-            You Already Used Your Free Try
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Ready for unlimited AI replies?
-          </p>
-          <Button 
-            size="lg" 
-            className="w-full py-6 text-lg font-semibold rounded-xl transition-all hover:scale-105"
-            onClick={handleStripeCheckout}
-          >
-            Get InstaDM Pro - $9.99/mo
-          </Button>
-          <p className="text-center text-sm text-muted-foreground mt-4">
-            Cancel anytime
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="px-4 py-8">
-        {/* Back link */}
-        <div className="mb-4">
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">← Back</Link>
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <div className="bg-black border-b border-gray-900 sticky top-0 z-20">
+        <div className="px-4 py-4">
+          <div className="flex justify-between items-center">
+            <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </Link>
+            <Link to="/auth">
+              <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                Sign In
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 py-8 max-w-2xl mx-auto">
+        {/* Hero Section */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Zap className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            Try Sales Machine Free
+          </h1>
+          <p className="text-xl text-gray-300">
+            Generate your first money-making DM reply
+          </p>
         </div>
 
-        {!generatedReply ? (
-          <div className="max-w-md mx-auto">
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 animate-fade-in">
-                <Copy className="w-8 h-8 text-primary-foreground" />
-              </div>
-              <h1 className="text-3xl font-bold mb-4">
-                Try InstaDM Pro Free
-              </h1>
-              <p className="text-muted-foreground">
-                Paste their message and get a perfect AI reply
-              </p>
-              {!hasUsedOnce && (
-                <p className="text-sm text-primary mt-2">
-                  ✨ This is your free try!
-                </p>
-              )}
-            </div>
-
+        {!hasUsedFreeReply ? (
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 mb-8">
             <div className="space-y-6">
-              <Textarea
-                placeholder="Hey, I saw your story about..."
-                value={dmText}
-                onChange={(e) => setDmText(e.target.value)}
-                className="min-h-40 text-lg rounded-xl resize-none"
-                disabled={isLoading}
-              />
+              {/* User Info & Sales Goal */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">
+                    Your Handle/Business
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. @fitnessguru, Course Creator"
+                    value={userHandle}
+                    onChange={(e) => setUserHandle(e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 text-white placeholder:text-gray-400 rounded-lg focus:ring-2 focus:ring-purple-500/50"
+                    disabled={isGenerating}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-white">
+                    Sales Goal
+                  </label>
+                  <Select value={goal} onValueChange={setGoal}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="What do you want to sell?" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700">
+                      {SALES_GOALS.map((goalOption) => (
+                        <SelectItem key={goalOption.value} value={goalOption.value} className="text-white hover:bg-gray-700">
+                          {goalOption.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Message Input */}
+              <div>
+                <label className="block text-sm font-medium mb-2 text-white">
+                  Their Message
+                </label>
+                <Textarea
+                  placeholder="Paste what they sent you..."
+                  value={dmText}
+                  onChange={(e) => setDmText(e.target.value)}
+                  className="min-h-32 resize-none bg-gray-800 border-gray-700 text-white placeholder:text-gray-400"
+                  disabled={isGenerating}
+                />
+              </div>
 
               <Button
-                onClick={generateReply}
-                disabled={isLoading || !dmText.trim()}
-                className="w-full py-6 text-lg font-semibold rounded-xl transition-all hover:scale-105"
+                onClick={generateFreeReply}
+                disabled={isGenerating || !dmText.trim() || !userHandle || !goal}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 transition-all hover:scale-105"
               >
-                {isLoading ? (
+                {isGenerating ? (
                   <div className="flex items-center justify-center space-x-2">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-current"></div>
-                    <span>AI is thinking...</span>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Generating Your Free Reply...</span>
                   </div>
                 ) : (
-                  'Generate Perfect Reply'
+                  <div className="flex items-center justify-center space-x-2">
+                    <Star className="w-4 h-4" />
+                    <span>Generate Free Sales Reply</span>
+                  </div>
                 )}
               </Button>
             </div>
           </div>
-        ) : generatedReply === "PAYWALL" ? (
-          <div className="max-w-md mx-auto text-center">
-            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 animate-scale-in">
-              <Check className="w-8 h-8 text-primary-foreground" />
-            </div>
-            
-            <h2 className="text-3xl font-bold mb-4">
-              Your Free Try Is Complete!
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Get unlimited AI replies and advanced features
-            </p>
-
-            <div className="bg-card rounded-2xl p-6 mb-6 text-left border">
-              <h3 className="font-semibold mb-4 text-center">Unlock full access:</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-sm">Unlimited AI-generated replies</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-sm">8 proven conversation strategies</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span className="text-sm">Conversation history & analytics</span>
-                </div>
-              </div>
-            </div>
-
-            <Button 
-              onClick={handleStripeCheckout}
-              className="w-full py-6 text-lg font-semibold rounded-xl mb-4 transition-all hover:scale-105"
-            >
-              Get InstaDM Pro - $9.99/mo
-            </Button>
-            
-            <p className="text-center text-sm text-muted-foreground">
-              Start getting better responses today • Cancel anytime
-            </p>
-          </div>
         ) : (
-          <div className="max-w-md mx-auto text-center">
-            <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-6 animate-scale-in">
-              <Check className="w-8 h-8 text-primary-foreground" />
-            </div>
-            
-            <h2 className="text-3xl font-bold mb-4">
-              Your Perfect Reply
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Copy this reply and send it
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 mb-8 text-center">
+            <Crown className="w-12 h-12 mx-auto mb-4 text-purple-400" />
+            <h3 className="text-xl font-bold text-white mb-2">Free Reply Used!</h3>
+            <p className="text-gray-300 mb-4">
+              Want unlimited money-making replies? Upgrade to Pro for just $9.99/month
             </p>
-
-            <div className="bg-card border rounded-2xl p-6 mb-6">
-              <p className="text-lg leading-relaxed mb-4 text-left">{generatedReply}</p>
-              <Button
-                onClick={copyToClipboard}
-                className="w-full font-semibold py-3 rounded-xl flex items-center justify-center gap-2"
-              >
-                {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
-                {copied ? 'Copied!' : 'Copy Reply'}
-              </Button>
-            </div>
-
-            <div className="text-center space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Want unlimited access to all features?
-              </p>
-              <Button
-                onClick={handleStripeCheckout}
-                className="w-full mb-4"
-              >
-                Get InstaDM Pro - $9.99/mo
-              </Button>
+            <div className="flex gap-3">
+              <Link to="/auth" className="flex-1">
+                <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                  Upgrade to Pro
+                </Button>
+              </Link>
               <Button
                 onClick={() => {
+                  setHasUsedFreeReply(false);
                   setGeneratedReply('');
                   setDmText('');
+                  setUserHandle('');
+                  setGoal('');
                 }}
                 variant="outline"
-                className="w-full"
+                className="border-gray-700 text-gray-300 hover:bg-gray-800"
               >
-                Back
+                Try Again
               </Button>
             </div>
           </div>
         )}
+
+        {/* Generated Reply Display */}
+        {generatedReply && (
+          <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border border-purple-500/30 rounded-xl mb-8">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-white">🎯 Your Money-Making Reply</h3>
+                  <p className="text-purple-300 text-sm">Ready to send and start making sales!</p>
+                </div>
+                <Button
+                  onClick={() => copyToClipboard(generatedReply)}
+                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Reply
+                </Button>
+              </div>
+              <div className="bg-black/40 rounded-xl p-4 border border-purple-500/20">
+                <p className="text-white leading-relaxed text-lg">{generatedReply}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Upgrade CTA */}
+        <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center">
+          <h3 className="text-xl font-bold text-white mb-2">Want Unlimited Sales Replies?</h3>
+          <p className="text-gray-300 mb-4">
+            Join thousands making money with AI-powered DM responses
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6 text-sm">
+            <div className="flex items-center gap-2 text-gray-300">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <span>Unlimited replies</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <span>9 sales goals</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-300">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              <span>Analytics & tracking</span>
+            </div>
+          </div>
+          <Link to="/auth">
+            <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-lg py-6">
+              Get Sales Machine Pro - $9.99/mo
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
